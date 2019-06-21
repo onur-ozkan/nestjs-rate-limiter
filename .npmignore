@@ -1,5 +1,6 @@
 # don't upload these to NPM
 .vscode
+coverage
 lib
 .prettierrc
 commitlint.config.js
