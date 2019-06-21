@@ -257,3 +257,36 @@ const redisClient = new Redis({ enableOfflineQueue: false });
 })
 export class ApplicationModule {}
 ```
+
+### With Memcache
+
+First you must install the `memcached` package:
+
+```bash
+npm install --save memcached
+```
+
+Then you must create a client and pass it via the `storeClient` config option to `RateLimiterModule.register`:
+
+> app.module.ts
+
+```ts
+import * as Memcached from 'memcached';
+const memcachedClient = new Memcached('127.0.0.1:11211');
+
+@Module({
+    imports: [
+        RateLimiterModule.register({
+            type: 'Memcached',
+            storeClient: memcachedClient,
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
+})
+export class ApplicationModule {}
+```

@@ -7,6 +7,7 @@ import {
     RateLimiterAbstract,
     RateLimiterRedis,
     IRateLimiterStoreOptions,
+    RateLimiterMemcache,
 } from 'rate-limiter-flexible';
 
 import { RATE_LIMITER_OPTIONS } from './rate-limiter.constants';
@@ -43,6 +44,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
                 rateLimiter = new RateLimiterRedis(libraryArguments as IRateLimiterStoreOptions);
 
                 console.log('Created RateLimiterRedis with keyPrefix =', keyPrefix);
+            } else if (limiterOptions.type === 'Memcache') {
+                rateLimiter = new RateLimiterMemcache(libraryArguments as IRateLimiterStoreOptions);
+
+                console.log('Created RateLimiterMemcache with keyPrefix =', keyPrefix);
             } else {
                 throw new Error(
                     `Invalid "type" option provided to RateLimiterInterceptor. Value was "${limiterOptions.type}"`,
