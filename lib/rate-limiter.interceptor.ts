@@ -26,7 +26,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
         @Inject(REFLECTOR) private readonly reflector: Reflector,
     ) {}
 
-    getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): RateLimiterMemory {
+    async getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): Promise<RateLimiterMemory> {
         let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix);
 
         const limiterOptions: RateLimiterModuleOptions = {
@@ -51,11 +51,27 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
                 console.log('Created RateLimiterMemcache with keyPrefix =', keyPrefix);
             } else if (limiterOptions.type === 'Postgres') {
-                rateLimiter = new RateLimiterPostgres(libraryArguments as IRateLimiterStoreOptions);
+                rateLimiter = await new Promise((resolve, reject) => {
+                    const limiter = new RateLimiterPostgres(libraryArguments as IRateLimiterStoreOptions, err => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(limiter);
+                        }
+                    });
+                });
 
                 console.log('Created RateLimiterPostgres with keyPrefix =', keyPrefix);
             } else if (limiterOptions.type === 'MySQL') {
-                rateLimiter = new RateLimiterMySQL(libraryArguments as IRateLimiterStoreOptions);
+                rateLimiter = await new Promise((resolve, reject) => {
+                    const limiter = new RateLimiterMySQL(libraryArguments as IRateLimiterStoreOptions, err => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(limiter);
+                        }
+                    });
+                });
 
                 console.log('Created RateLimiterMySQL with keyPrefix =', keyPrefix);
             } else {
@@ -100,7 +116,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
             }
         }
 
-        const rateLimiter: RateLimiterMemory = this.getRateLimiter(keyPrefix, reflectedOptions);
+        const rateLimiter: RateLimiterMemory = await this.getRateLimiter(keyPrefix, reflectedOptions);
 
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
