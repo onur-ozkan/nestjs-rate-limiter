@@ -12,7 +12,7 @@
 
 ## Description
 
-nestjs-rate-limiter is a module which adds in configurable rate limiting for
+`nestjs-rate-limiter` is a module which adds in configurable rate limiting for
 [NestJS](https://github.com/nestjs/nest) applications.
 
 Under the hood it uses
@@ -32,7 +32,7 @@ yarn add nestjs-rate-limiter
 
 ### Requirements
 
-nestjs-rate-limiter is built to work with NestJS 6.x versions.
+`nestjs-rate-limiter` is built to work with NestJS 6.x versions.
 
 ## Usage
 
