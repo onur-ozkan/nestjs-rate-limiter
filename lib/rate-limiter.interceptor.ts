@@ -133,8 +133,11 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
             return next.handle();
         } catch (rateLimiterResponse) {
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+            if (rateLimiterResponse instanceof Error) {
+                throw rateLimiterResponse;
+            }
 
+            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
             response.status(429).json({
                 statusCode: HttpStatus.TOO_MANY_REQUESTS,
                 error: 'Too Many Requests',
