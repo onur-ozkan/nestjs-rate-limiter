@@ -334,3 +334,54 @@ export class ApplicationModule {}
 Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
 an additional parameter as noted at
 <https://github.com/animir/node-rate-limiter-flexible/wiki/PostgreSQL#sequelize-and-knex-support>.
+
+### With MySQL
+
+First you must install either the `mysql` or `mysql2` package:
+
+```bash
+npm install --save mysql
+```
+
+```bash
+npm install --save mysql2
+```
+
+Then you must create a client and pass it via the `storeClient` config option to `RateLimiterModule.register`:
+
+> app.module.ts
+
+```ts
+import * as mysql from 'mysql';
+
+import * as mysql from 'mysql2';
+
+const mysqlClient = mysql.createPool({
+    connectionLimit: 100,
+    host: 'localhost',
+    user: 'root',
+    password: 'secret',
+});
+
+@Module({
+    imports: [
+        RateLimiterModule.register({
+            type: 'MySQL',
+            storeClient: mysqlClient,
+            dbName: 'ratelimits',
+            tableName: 'rate_limiting', // not specifying this will create one table for each keyPrefix
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
+})
+export class ApplicationModule {}
+```
+
+Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
+an additional parameter as noted at
+<https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL#sequelize-and-knex-support>.
