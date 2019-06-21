@@ -90,7 +90,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
 
-        const key = request.user ? request.user.sub : request.ip;
+        const key = request.user ? request.user.id : request.ip;
 
         try {
             const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
