@@ -1,7 +1,13 @@
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus } from '@nestjs/common';
-import { RateLimiterMemory, RateLimiterRes, RateLimiterAbstract } from 'rate-limiter-flexible';
+import {
+    RateLimiterMemory,
+    RateLimiterRes,
+    RateLimiterAbstract,
+    RateLimiterRedis,
+    IRateLimiterStoreOptions,
+} from 'rate-limiter-flexible';
 
 import { RATE_LIMITER_OPTIONS } from './rate-limiter.constants';
 import { RateLimiterModuleOptions } from './rate-limiter.interface';
@@ -19,21 +25,24 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
     getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): RateLimiterMemory {
         let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix);
-        const limiterOptions = {
+
+        const limiterOptions: RateLimiterModuleOptions = {
             ...this.options,
             ...options,
+            keyPrefix,
         };
+
+        const { type, pointsConsumed, ...libraryArguments } = limiterOptions;
 
         if (!rateLimiter) {
             if (limiterOptions.type === 'Memory') {
-                rateLimiter = new RateLimiterMemory({
-                    ...limiterOptions,
-                    keyPrefix,
-                    points: limiterOptions.points,
-                    duration: limiterOptions.duration,
-                });
+                rateLimiter = new RateLimiterMemory(libraryArguments);
 
                 console.log('Created RateLimiterMemory with keyPrefix =', keyPrefix);
+            } else if (limiterOptions.type === 'Redis') {
+                rateLimiter = new RateLimiterRedis(libraryArguments as IRateLimiterStoreOptions);
+
+                console.log('Created RateLimiterRedis with keyPrefix =', keyPrefix);
             } else {
                 throw new Error(
                     `Invalid "type" option provided to RateLimiterInterceptor. Value was "${limiterOptions.type}"`,

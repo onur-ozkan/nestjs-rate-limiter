@@ -168,7 +168,9 @@ Valid values for this library are:
 -   [Postgres](https://github.com/animir/node-rate-limiter-flexible/wiki/Postgres)
 -   [MySQL](https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL)
 
-There are option options that the `rate-limiter-flexible` library supports, but aren't implemented
+For examples showing how to define and setup different cache types, see the section in the README.
+
+There are other options that the `rate-limiter-flexible` library supports, but aren't implemented
 within this library yet. Feel free to submit a PR adding support for those.
 
 ### points: number
@@ -212,3 +214,46 @@ When using the `@RateLimit` decorator, the controller name and route name will b
 For instance if you have the decorator on a controller, the `keyPrefix` will be the controllers
 name. If used on a route, it will be a combination of the controllers name and the route functions
 name.
+
+## Examples
+
+### With Redis
+
+First you must install either the `redis` or `ioredis` package:
+
+```bash
+npm install --save redis
+```
+
+```bash
+npm install --save ioredis
+```
+
+Then you must create a client (offline queue must be turned off) and pass it via
+the `storeClient` config option to `RateLimiterModule.register`:
+
+> app.module.ts
+
+```ts
+import * as redis from 'redis';
+const redisClient = redis.createClient({ enable_offline_queue: false });
+
+import * as Redis from 'ioredis';
+const redisClient = new Redis({ enableOfflineQueue: false });
+
+@Module({
+    imports: [
+        RateLimiterModule.register({
+            type: 'Redis',
+            storeClient: redisClient,
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
+})
+export class ApplicationModule {}
+```
