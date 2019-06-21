@@ -290,3 +290,47 @@ const memcachedClient = new Memcached('127.0.0.1:11211');
 })
 export class ApplicationModule {}
 ```
+
+### With Postgres
+
+First you must install the `pg` package:
+
+```bash
+npm install --save pg
+```
+
+Then you must create a client and pass it via the `storeClient` config option to `RateLimiterModule.register`:
+
+> app.module.ts
+
+```ts
+import { Pool } from 'pg';
+const postgresClient = new Pool({
+    host: '127.0.0.1',
+    port: 5432,
+    database: 'root',
+    user: 'root',
+    password: 'secret',
+});
+
+@Module({
+    imports: [
+        RateLimiterModule.register({
+            type: 'Postgres',
+            storeClient: postgresClient,
+            tableName: 'rate_limiting', // not specifying this will create one table for each keyPrefix
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
+})
+export class ApplicationModule {}
+```
+
+Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
+an additional parameter as noted at
+<https://github.com/animir/node-rate-limiter-flexible/wiki/PostgreSQL#sequelize-and-knex-support>.

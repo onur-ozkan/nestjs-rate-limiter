@@ -8,6 +8,7 @@ import {
     RateLimiterRedis,
     IRateLimiterStoreOptions,
     RateLimiterMemcache,
+    RateLimiterPostgres,
 } from 'rate-limiter-flexible';
 
 import { RATE_LIMITER_OPTIONS } from './rate-limiter.constants';
@@ -48,6 +49,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
                 rateLimiter = new RateLimiterMemcache(libraryArguments as IRateLimiterStoreOptions);
 
                 console.log('Created RateLimiterMemcache with keyPrefix =', keyPrefix);
+            } else if (limiterOptions.type === 'Postgres') {
+                rateLimiter = new RateLimiterPostgres(libraryArguments as IRateLimiterStoreOptions);
+
+                console.log('Created RateLimiterPostgres with keyPrefix =', keyPrefix);
             } else {
                 throw new Error(
                     `Invalid "type" option provided to RateLimiterInterceptor. Value was "${limiterOptions.type}"`,

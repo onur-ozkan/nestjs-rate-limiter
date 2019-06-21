@@ -65,10 +65,5 @@
   "peerDependencies": {
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0"
-  },
-  "optionalDependencies": {
-    "ioredis": "^4.10.0",
-    "memcached": "^2.2.2",
-    "redis": "^2.8.0"
   }
 }
