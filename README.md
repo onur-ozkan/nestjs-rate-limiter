@@ -108,6 +108,10 @@ The above example would rate limit the `/signup` route to 1 request every 60 sec
 
 Note that when passing in options via the decorator, it will combine the options for the module
 (defined via `RateLimiterModule.register` or the default ones) along with the decorator options.
+While this should be fine for most use cases, if you have defined a global interceptor with a
+`pointsConsumed` option, that will also apply to all decorated requests. So if you need to have
+a different `pointsConsumed` for decorated requests than what you have defined globally, you must
+pass it in when writing your decorator.
 
 Also note that if the `keyPrefix` is already in use, it will not update any options, only reuse the
 existing rate limiter object when it was last instantiated. This should be fine with the decorators,

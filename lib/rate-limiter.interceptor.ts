@@ -35,7 +35,9 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
                 console.log('Created RateLimiterMemory with keyPrefix =', keyPrefix);
             } else {
-                throw `Invalid "type" option provided to RateLimiterInterceptor. Value was "${limiterOptions.type}"`;
+                throw new Error(
+                    `Invalid "type" option provided to RateLimiterInterceptor. Value was "${limiterOptions.type}"`,
+                );
             }
 
             this.rateLimiters.set(keyPrefix, rateLimiter);
@@ -65,11 +67,11 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
             if (reflectedOptions.keyPrefix) {
                 keyPrefix = reflectedOptions.keyPrefix;
-            } else if (!this.options.keyPrefix) {
+            } else {
                 keyPrefix = context.getClass().name;
 
                 if (context.getHandler()) {
-                    keyPrefix += context.getHandler().name;
+                    keyPrefix += `-${context.getHandler().name}`;
                 }
             }
         }
@@ -86,6 +88,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
             response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
             response.set('X-RateLimit-Limit', points);
+            response.set('X-RateLimit-Consumed', pointsConsumed);
             response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
             response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toTimeString());
 
