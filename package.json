@@ -1,0 +1,69 @@
+{
+  "name": "nestjs-rate-limiter",
+  "version": "1.0.0",
+  "description": "A configurable rate limiter for NestJS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanTheAllmighty/nestjs-rate-limiter.git"
+  },
+  "keywords": [
+    "nestjs",
+    "nest",
+    "rate",
+    "limit"
+  ],
+  "author": "Ryan Dowling <ryan@ryandowling.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter/issues"
+  },
+  "homepage": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter#readme",
+  "directories": {
+    "lib": "lib"
+  },
+  "main": "dist",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "jest --passWithNoTests",
+    "prepublish:next": "npm run build",
+    "publish:next": "npm publish --access public --tag next",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "git add -f"
+    ]
+  },
+  "dependencies": {
+    "rate-limiter-flexible": "^1.0.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.0.0",
+    "@commitlint/config-conventional": "^8.0.0",
+    "@nestjs/common": "^6.3.1",
+    "@nestjs/core": "^6.3.1",
+    "@types/jest": "^24.0.15",
+    "husky": "^2.4.1",
+    "jest": "^24.8.0",
+    "lint-staged": "^8.2.1",
+    "prettier": "^1.18.2",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.2",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.2"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.0.0",
+    "@nestjs/core": "^6.0.0"
+  }
+}

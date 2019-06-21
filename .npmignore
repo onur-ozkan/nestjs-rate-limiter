@@ -1,0 +1,9 @@
+# don't upload these to NPM
+.vscode
+lib
+.prettierrc
+commitlint.config.js
+jest.config.js
+package-lock.json
+tsconfig.json
+tslint.json
