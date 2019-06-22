@@ -10,6 +10,7 @@ import {
 
 @Module({
     exports: [RATE_LIMITER_OPTIONS],
+    providers: [{ provide: RATE_LIMITER_OPTIONS, useValue: defaultRateLimiterOptions }],
 })
 export class RateLimiterModule {
     static register(options: RateLimiterModuleOptions = defaultRateLimiterOptions): DynamicModule {

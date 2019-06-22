@@ -60,7 +60,7 @@ Now you need to register the interceptor. You can do this only on some routes:
 ```ts
 import { RateLimiterInterceptor } from 'nestjs-rate-limiter';
 
-@UseInterceptors(new RateLimiterInterceptor())
+@UseInterceptors(RateLimiterInterceptor)
 @Get('/login')
 public async login() {
     console.log('hello');
@@ -80,7 +80,7 @@ import { RateLimiterModule, RateLimiterInterceptor } from 'nestjs-rate-limiter';
     providers: [
         {
             provide: APP_INTERCEPTOR,
-            useValue: new RateLimiterInterceptor(),
+            useClass: RateLimiterInterceptor,
         },
     ],
 })
