@@ -25,6 +25,7 @@
     "lib": "lib"
   },
   "scripts": {
+    "prebuild": "rimraf dist/",
     "build": "tsc -p tsconfig.json",
     "test": "jest --passWithNoTests",
     "prepublishOnly": "npm run build",
@@ -58,6 +59,7 @@
     "np": "^5.0.3",
     "prettier": "^1.18.2",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^2.6.3",
     "rxjs": "^6.5.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",

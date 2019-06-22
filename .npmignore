@@ -1,7 +1,7 @@
 # don't upload these to NPM
-.vscode
-coverage
-lib
+.vscode/
+coverage/
+lib/
 .prettierrc
 commitlint.config.js
 index.ts
