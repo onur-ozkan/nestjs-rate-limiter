@@ -18,16 +18,17 @@
     "url": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter/issues"
   },
   "homepage": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "directories": {
     "lib": "lib"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "jest --passWithNoTests",
-    "prepublish:next": "npm run build",
-    "publish:next": "npm publish --access public --tag next",
-    "prepublish:npm": "npm run build",
-    "publish:npm": "npm publish --access public"
+    "prepublishOnly": "npm run build",
+    "release": "np"
   },
   "husky": {
     "hooks": {
@@ -54,6 +55,7 @@
     "husky": "^2.4.1",
     "jest": "^24.8.0",
     "lint-staged": "^8.2.1",
+    "np": "^5.0.3",
     "prettier": "^1.18.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
