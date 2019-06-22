@@ -21,7 +21,6 @@
   "directories": {
     "lib": "lib"
   },
-  "main": "dist",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "jest --passWithNoTests",

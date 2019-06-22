@@ -4,6 +4,7 @@ coverage
 lib
 .prettierrc
 commitlint.config.js
+index.ts
 jest.config.js
 package-lock.json
 tsconfig.json
