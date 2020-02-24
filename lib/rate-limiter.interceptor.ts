@@ -1,17 +1,24 @@
-import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
-import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus } from '@nestjs/common';
 import {
-    RateLimiterMemory,
-    RateLimiterRes,
-    RateLimiterAbstract,
-    RateLimiterRedis,
+    CallHandler,
+    ExecutionContext,
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    NestInterceptor,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import {
     IRateLimiterStoreOptions,
+    RateLimiterAbstract,
     RateLimiterMemcache,
-    RateLimiterPostgres,
+    RateLimiterMemory,
     RateLimiterMySQL,
+    RateLimiterPostgres,
+    RateLimiterRedis,
+    RateLimiterRes,
 } from 'rate-limiter-flexible';
-
+import { Observable } from 'rxjs';
 import { RATE_LIMITER_OPTIONS } from './rate-limiter.constants';
 import { RateLimiterModuleOptions } from './rate-limiter.interface';
 
@@ -125,24 +132,21 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
         try {
             const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
-
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.set('X-RateLimit-Limit', points);
-            response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
-            response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).getTime());
-
+            const retryAfterValue = Math.ceil(rateLimiterResponse.msBeforeNext / 1000);
+            response.setHeader('Retry-After', retryAfterValue);
+            response.setHeader('X-RateLimit-Limit', points);
+            response.setHeader('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
+            const resetValue = new Date(Date.now() + rateLimiterResponse.msBeforeNext).getTime();
+            response.setHeader('X-Retry-Reset', resetValue);
             return next.handle();
         } catch (rateLimiterResponse) {
             if (rateLimiterResponse instanceof Error) {
                 throw rateLimiterResponse;
             }
-
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.status(429).json({
-                statusCode: HttpStatus.TOO_MANY_REQUESTS,
-                error: 'Too Many Requests',
-                message: 'Rate limit exceeded.',
-            });
+            const retryAfterValue = Math.ceil(rateLimiterResponse.msBeforeNext / 1000);
+            response.setHeader('Retry-After', retryAfterValue);
+            const r = { message: 'Rate limit exceeded.' };
+            throw new HttpException(r, HttpStatus.TOO_MANY_REQUESTS);
         }
     }
 }
