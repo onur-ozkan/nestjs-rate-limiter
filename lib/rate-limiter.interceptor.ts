@@ -129,7 +129,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
             response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
             response.set('X-RateLimit-Limit', points);
             response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
-            response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toTimeString());
+            response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
 
             return next.handle();
         } catch (rateLimiterResponse) {
