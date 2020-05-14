@@ -121,6 +121,9 @@ export class RateLimiterInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
 
+        if (!response.set && response.header) response.set = response.header;
+        else throw new Error('Cannot determine method to set response headers');
+
         const key = request.user ? request.user.id : request.ip;
 
         try {
