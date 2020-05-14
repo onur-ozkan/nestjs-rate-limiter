@@ -20,6 +20,7 @@ const REFLECTOR = 'Reflector';
 @Injectable()
 export class RateLimiterInterceptor implements NestInterceptor {
     private rateLimiters: Map<string, RateLimiterAbstract> = new Map();
+    private trustedProxyHeader: string;
 
     constructor(
         @Inject(RATE_LIMITER_OPTIONS) private readonly options: RateLimiterModuleOptions,
@@ -28,7 +29,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
     async getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): Promise<RateLimiterMemory> {
         let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix);
-
+        this.trustedProxyHeader = options.trustedProxyHeader;
         const limiterOptions: RateLimiterModuleOptions = {
             ...this.options,
             ...options,
@@ -120,25 +121,16 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
-
-        const key = request.user ? request.user.id : request.ip;
-
+        const key = request.user?.id || request.headers[this.trustedProxyHeader] || request.ip;
         try {
-            const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
-
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.set('X-RateLimit-Limit', points);
-            response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
-            response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
-
+            await rateLimiter.consume(key, pointsConsumed);
             return next.handle();
         } catch (rateLimiterResponse) {
             if (rateLimiterResponse instanceof Error) {
                 throw rateLimiterResponse;
             }
-
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.status(429).json({
+            response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+            response.status(429).send({
                 statusCode: HttpStatus.TOO_MANY_REQUESTS,
                 error: 'Too Many Requests',
                 message: 'Rate limit exceeded.',

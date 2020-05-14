@@ -5,6 +5,7 @@ import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 export interface RateLimiterModuleOptions extends Partial<IRateLimiterMongoOptions> {
     type?: string;
     pointsConsumed?: number;
+    trustedProxyHeader?: string;
 }
 
 export interface RateLimiterOptionsFactory {
