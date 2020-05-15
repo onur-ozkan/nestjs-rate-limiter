@@ -1,6 +1,14 @@
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus } from '@nestjs/common';
+import {
+    NestInterceptor,
+    Injectable,
+    ExecutionContext,
+    CallHandler,
+    Inject,
+    HttpStatus,
+    HttpException,
+} from '@nestjs/common';
 import {
     RateLimiterMemory,
     RateLimiterRes,
@@ -141,11 +149,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
             }
 
             response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.status(429).json({
-                statusCode: HttpStatus.TOO_MANY_REQUESTS,
-                error: 'Too Many Requests',
-                message: 'Rate limit exceeded.',
-            });
+            throw new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS);
         }
     }
 }
