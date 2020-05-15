@@ -7,10 +7,11 @@ import {
     RateLimiterModuleAsyncOptions,
     RateLimiterOptionsFactory,
 } from './rate-limiter.interface';
+import { RateLimiterService } from './rate-limiter.service';
 
 @Module({
-    exports: [RATE_LIMITER_OPTIONS],
-    providers: [{ provide: RATE_LIMITER_OPTIONS, useValue: defaultRateLimiterOptions }],
+    exports: [RateLimiterService, RATE_LIMITER_OPTIONS],
+    providers: [RateLimiterService, { provide: RATE_LIMITER_OPTIONS, useValue: defaultRateLimiterOptions }],
 })
 export class RateLimiterModule {
     static register(options: RateLimiterModuleOptions = defaultRateLimiterOptions): DynamicModule {

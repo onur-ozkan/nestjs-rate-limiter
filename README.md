@@ -86,6 +86,42 @@ import { RateLimiterModule, RateLimiterInterceptor } from 'nestjs-rate-limiter';
 export class ApplicationModule {}
 ```
 
+### Using Guard
+
+Due to the execution order of NestJS, when using the interceptor the rate limiter will not execute prior to guards being executed. If your guard rejects a request, that request will not be counted towards the rate limits defined for your application. As an alternative for the interceptor, you may wish to use the exported guard instead:
+
+> app.controller.ts
+
+```ts
+import { RateLimiterGuard } from 'nestjs-rate-limiter';
+
+@UseGuards(RateLimiterGuard)
+@Get('/login')
+public async login() {
+    console.log('hello');
+}
+```
+
+Or you can choose to register the guard globally:
+
+> app.module.ts
+
+```ts
+import { APP_GUARD } from '@nestjs/core';
+import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter';
+
+@Module({
+    imports: [RateLimiterModule],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: RateLimiterGuard,
+        },
+    ],
+})
+export class ApplicationModule {}
+```
+
 ### Decorator
 
 You can use the `@RateLimit` decorator to specify the points and duration for rate limiting on a per controller or per
