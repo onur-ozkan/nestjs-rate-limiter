@@ -1,3 +1,5 @@
+# [Looking for a maintainer](https://github.com/RyanTheAllmighty/nestjs-rate-limiter/issues/12)
+
 <p align="center">
   <a href="https://nestjs.com/" target="blank"><img src="https://docs.nestjs.com/assets/logo_text.svg" alt="NestJS Logo" />   </a>
 </p>
