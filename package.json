@@ -50,8 +50,8 @@
   "devDependencies": {
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
-    "@nestjs/common": "^6.3.1",
-    "@nestjs/core": "^6.3.1",
+    "@nestjs/common": "^7.0.0",
+    "@nestjs/core": "^7.0.0",
     "@types/jest": "^24.0.15",
     "husky": "^2.4.1",
     "jest": "^24.8.0",
@@ -66,7 +66,7 @@
     "typescript": "^3.5.2"
   },
   "peerDependencies": {
-    "@nestjs/common": "^6.0.0",
-    "@nestjs/core": "^6.0.0"
+    "@nestjs/common": "^6.0.0 || ^7.0.0",
+    "@nestjs/core": "^6.0.0 || ^7.0.0"
   }
 }
