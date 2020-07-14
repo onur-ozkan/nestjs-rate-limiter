@@ -12,6 +12,8 @@
 
 ## Description
 
+This is a fork of https://github.com/RyanTheAllmighty/nestjs-rate-limiter with a minor change to make it work with fastify.
+
 `nestjs-rate-limiter` is a module which adds in configurable rate limiting for [NestJS](https://github.com/nestjs/nest)
 applications.
 

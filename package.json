@@ -1,23 +1,23 @@
 {
-  "name": "nestjs-rate-limiter",
-  "version": "1.0.1",
-  "description": "A configurable rate limiter for NestJS",
+  "name": "nestjs-fastify-rate-limiter",
+  "version": "0.1",
+  "description": "A configurable rate limiter for NestJS working for fastify (fork of https://github.com/RyanTheAllmighty/nestjs-rate-limiter)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RyanTheAllmighty/nestjs-rate-limiter.git"
+    "url": "git+https://github.com/smdehaas/nestjs-rate-limiter.git"
   },
   "keywords": [
     "nestjs",
+    "fastify",
     "nest",
     "rate",
     "limit"
   ],
-  "author": "Ryan Dowling <ryan@ryandowling.me>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter/issues"
+    "url": "https://github.com/smdehaas/nestjs-rate-limiter/issues"
   },
-  "homepage": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter#readme",
+  "homepage": "https://github.com/smdehaas/nestjs-rate-limiter#readme",
   "publishConfig": {
     "access": "public"
   },
