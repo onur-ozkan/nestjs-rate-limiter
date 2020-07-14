@@ -6,6 +6,7 @@ export interface RateLimiterModuleOptions extends Partial<IRateLimiterMongoOptio
     type?: string;
     pointsConsumed?: number;
     trustedProxyHeader?: string;
+    rateLimitDecoratorOnly?: boolean; // When set, only apply rate-limiter when the @RateLimit decorator is set.
 }
 
 export interface RateLimiterOptionsFactory {

@@ -22,9 +22,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
     private rateLimiters: Map<string, RateLimiterAbstract> = new Map();
 
     constructor(
-        @Inject(RATE_LIMITER_OPTIONS) private readonly options: RateLimiterModuleOptions,
         @Inject(REFLECTOR) private readonly reflector: Reflector,
-    ) {}
+        @Inject(RATE_LIMITER_OPTIONS) private readonly options: RateLimiterModuleOptions,
+    ) {
+    }
 
     async getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): Promise<RateLimiterMemory> {
         let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix);
@@ -76,15 +77,20 @@ export class RateLimiterInterceptor implements NestInterceptor {
     }
 
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+        const reflectedOptions: RateLimiterModuleOptions = this.reflector.get<RateLimiterModuleOptions>(
+            'rateLimit',
+            context.getHandler(),
+        );
+
+        if (this.options.rateLimitDecoratorOnly && !reflectedOptions) {
+            return next.handle();
+        }
+
         let trustedProxyHeader: string = this.options.trustedProxyHeader;
         let points: number = this.options.points;
         let pointsConsumed: number = this.options.pointsConsumed;
         let keyPrefix: string = this.options.keyPrefix;
 
-        const reflectedOptions: RateLimiterModuleOptions = this.reflector.get<RateLimiterModuleOptions>(
-            'rateLimit',
-            context.getHandler(),
-        );
 
         if (reflectedOptions) {
             if (reflectedOptions.points) {
