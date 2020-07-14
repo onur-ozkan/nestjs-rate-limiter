@@ -1,6 +1,6 @@
 {
   "name": "nestjs-rate-limiter-fastify",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A configurable rate limiter for NestJS working for fastify (fork of https://github.com/RyanTheAllmighty/nestjs-rate-limiter)",
   "repository": {
     "type": "git",
