@@ -1,72 +1,72 @@
 {
-  "name": "nestjs-rate-limiter-fastify",
-  "version": "0.0.3",
-  "description": "A configurable rate limiter for NestJS working for fastify (fork of https://github.com/RyanTheAllmighty/nestjs-rate-limiter)",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/smdehaas/nestjs-rate-limiter.git"
-  },
-  "keywords": [
-    "nestjs",
-    "fastify",
-    "nest",
-    "rate",
-    "limit"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/smdehaas/nestjs-rate-limiter/issues"
-  },
-  "homepage": "https://github.com/smdehaas/nestjs-rate-limiter#readme",
-  "publishConfig": {
-    "access": "public"
-  },
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "prebuild": "rimraf dist/",
-    "build": "tsc -p tsconfig.json",
-    "test": "jest --passWithNoTests",
-    "prepublishOnly": "npm run build",
-    "release": "np"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged",
-      "pre-push": "npm test"
+    "name": "nestjs-rate-limiter-fastify",
+    "version": "0.0.3",
+    "description": "A configurable rate limiter for NestJS working for fastify (fork of https://github.com/RyanTheAllmighty/nestjs-rate-limiter)",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/smdehaas/nestjs-rate-limiter.git"
+    },
+    "keywords": [
+        "nestjs",
+        "fastify",
+        "nest",
+        "rate",
+        "limit"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/smdehaas/nestjs-rate-limiter/issues"
+    },
+    "homepage": "https://github.com/smdehaas/nestjs-rate-limiter#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "directories": {
+        "lib": "lib"
+    },
+    "scripts": {
+        "prebuild": "rimraf dist/",
+        "build": "tsc -p tsconfig.json",
+        "test": "jest --passWithNoTests",
+        "prepublishOnly": "npm run build",
+        "release": "np"
+    },
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+            "pre-commit": "lint-staged",
+            "pre-push": "npm test"
+        }
+    },
+    "lint-staged": {
+        "*.ts": [
+            "prettier --write",
+            "git add -f"
+        ]
+    },
+    "dependencies": {
+        "rate-limiter-flexible": "^2.1.9"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^8.0.0",
+        "@commitlint/config-conventional": "^8.0.0",
+        "@nestjs/common": "^6.3.1",
+        "@nestjs/core": "^6.3.1",
+        "@types/jest": "^24.0.15",
+        "husky": "^2.4.1",
+        "jest": "^24.8.0",
+        "lint-staged": "^8.2.1",
+        "np": "^5.0.3",
+        "prettier": "^1.19.1",
+        "reflect-metadata": "^0.1.13",
+        "rimraf": "^2.6.3",
+        "rxjs": "^6.5.2",
+        "ts-jest": "^24.0.2",
+        "ts-node": "^8.3.0",
+        "typescript": "^3.9.2"
+    },
+    "peerDependencies": {
+        "@nestjs/common": "^6.0.0",
+        "@nestjs/core": "^6.0.0"
     }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add -f"
-    ]
-  },
-  "dependencies": {
-    "rate-limiter-flexible": "^1.0.2"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^8.0.0",
-    "@commitlint/config-conventional": "^8.0.0",
-    "@nestjs/common": "^6.3.1",
-    "@nestjs/core": "^6.3.1",
-    "@types/jest": "^24.0.15",
-    "husky": "^2.4.1",
-    "jest": "^24.8.0",
-    "lint-staged": "^8.2.1",
-    "np": "^5.0.3",
-    "prettier": "^1.19.1",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^2.6.3",
-    "rxjs": "^6.5.2",
-    "ts-jest": "^24.0.2",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.9.2"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^6.0.0",
-    "@nestjs/core": "^6.0.0"
-  }
 }
