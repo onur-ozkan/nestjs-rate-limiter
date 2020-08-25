@@ -126,7 +126,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
         try {
             const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
 
-            if (response) {
+            if (response && typeof response.set === 'function') {
                 response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
                 response.set('X-RateLimit-Limit', points);
                 response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
@@ -139,7 +139,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
                 throw rateLimiterResponse;
             }
 
-            if (response) {
+            if (response && typeof response.set === 'function') {
                 response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
                 response.status(429).json({
                     statusCode: HttpStatus.TOO_MANY_REQUESTS,
