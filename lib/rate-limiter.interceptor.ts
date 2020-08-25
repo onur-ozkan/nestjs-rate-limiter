@@ -126,10 +126,12 @@ export class RateLimiterInterceptor implements NestInterceptor {
         try {
             const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
 
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.set('X-RateLimit-Limit', points);
-            response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
-            response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
+            if (response) {
+                response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+                response.set('X-RateLimit-Limit', points);
+                response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
+                response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
+            }
 
             return next.handle();
         } catch (rateLimiterResponse) {
@@ -137,12 +139,14 @@ export class RateLimiterInterceptor implements NestInterceptor {
                 throw rateLimiterResponse;
             }
 
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.status(429).json({
-                statusCode: HttpStatus.TOO_MANY_REQUESTS,
-                error: 'Too Many Requests',
-                message: 'Rate limit exceeded.',
-            });
+            if (response) {
+                response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+                response.status(429).json({
+                    statusCode: HttpStatus.TOO_MANY_REQUESTS,
+                    error: 'Too Many Requests',
+                    message: 'Rate limit exceeded.',
+                });
+            }
         }
     }
 }
