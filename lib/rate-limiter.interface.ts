@@ -3,7 +3,9 @@ import { IRateLimiterMongoOptions } from 'rate-limiter-flexible';
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 
 export interface RateLimiterModuleOptions extends Partial<IRateLimiterMongoOptions> {
-    type?: string;
+    for?: 'Express' | 'Fastify' | 'Microservice';
+    type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL';
+    errorMessage?: string;
     pointsConsumed?: number;
 }
 

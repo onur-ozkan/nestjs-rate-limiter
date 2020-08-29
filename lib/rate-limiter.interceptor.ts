@@ -14,6 +14,7 @@ import {
 
 import { RATE_LIMITER_OPTIONS } from './rate-limiter.constants';
 import { RateLimiterModuleOptions } from './rate-limiter.interface';
+import { defaultRateLimiterOptions } from './default-options';
 
 const REFLECTOR = 'Reflector';
 
@@ -24,10 +25,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
     constructor(
         @Inject(RATE_LIMITER_OPTIONS) private readonly options: RateLimiterModuleOptions,
         @Inject(REFLECTOR) private readonly reflector: Reflector,
-    ) {}
+    ) { }
 
-    async getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): Promise<RateLimiterMemory> {
-        let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix);
+    async getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): Promise<RateLimiterMemory & { for?: 'Express' | 'Fastify' | 'Microservice', errorMessage?: string }> {
+        let rateLimiter: RateLimiterMemory & { for?: 'Express' | 'Fastify' | 'Microservice', errorMessage?: string } = this.rateLimiters.get(keyPrefix);
 
         const limiterOptions: RateLimiterModuleOptions = {
             ...this.options,
@@ -83,6 +84,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
             this.rateLimiters.set(keyPrefix, rateLimiter);
         }
 
+
+        rateLimiter.errorMessage = limiterOptions.errorMessage || defaultRateLimiterOptions.errorMessage;
+        rateLimiter.for = limiterOptions.for || defaultRateLimiterOptions.for;
+
         return rateLimiter;
     }
 
@@ -116,33 +121,57 @@ export class RateLimiterInterceptor implements NestInterceptor {
             }
         }
 
-        const rateLimiter: RateLimiterMemory = await this.getRateLimiter(keyPrefix, reflectedOptions);
+        const rateLimiter: RateLimiterMemory & { for?: 'Express' | 'Fastify' | 'Microservice', errorMessage?: string } = await this.getRateLimiter(
+            keyPrefix,
+            reflectedOptions,
+        );
 
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
 
         const key = request.user ? request.user.id : request.ip;
 
-        try {
-            const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
+        if (rateLimiter.for == 'Fastify') {
+            try {
+                const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
 
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.set('X-RateLimit-Limit', points);
-            response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
-            response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
+                response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+                response.header('X-RateLimit-Limit', points);
+                response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
+                response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
 
-            return next.handle();
-        } catch (rateLimiterResponse) {
-            if (rateLimiterResponse instanceof Error) {
-                throw rateLimiterResponse;
+                return next.handle();
+            } catch (rateLimiterResponse) {
+                response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+                response
+                    .code(429)
+                    .header('Content-Type', 'application/json; charset=utf-8')
+                    .send({
+                        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+                        error: 'Too Many Requests',
+                        message: rateLimiter.errorMessage,
+                    })
             }
+        }
 
-            response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
-            response.status(429).json({
-                statusCode: HttpStatus.TOO_MANY_REQUESTS,
-                error: 'Too Many Requests',
-                message: 'Rate limit exceeded.',
-            });
+        else {
+            try {
+                const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed);
+
+                response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+                response.set('X-RateLimit-Limit', points);
+                response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints);
+                response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString());
+
+                return next.handle();
+            } catch (rateLimiterResponse) {
+                response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
+                response.status(429).json({
+                    statusCode: HttpStatus.TOO_MANY_REQUESTS,
+                    error: 'Too Many Requests',
+                    message: rateLimiter.errorMessage,
+                });
+            }
         }
     }
 }
