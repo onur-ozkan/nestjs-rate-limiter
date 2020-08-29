@@ -15,16 +15,16 @@ import {
 import { RateLimiterModuleOptions } from './rate-limiter.interface'
 import { defaultRateLimiterOptions } from './default-options'
 
-const REFLECTOR = 'Reflector'
-
 @Injectable()
 export class RateLimiterInterceptor implements NestInterceptor {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
 
 	constructor(
 		@Inject('RATE_LIMITER_OPTIONS') private readonly options: RateLimiterModuleOptions,
-		@Inject(REFLECTOR) private readonly reflector: Reflector
-	) {}
+		@Inject('Reflector') private readonly reflector: Reflector
+	) {
+		this.options = { ...defaultRateLimiterOptions, ...this.options }
+	}
 
 	async getRateLimiter(
 		keyPrefix: string,
@@ -41,22 +41,22 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			keyPrefix
 		}
 
-		const { type, pointsConsumed, ...libraryArguments } = limiterOptions
+		const { ...libraryArguments } = limiterOptions
 
 		if (!rateLimiter) {
-			if (limiterOptions.type === 'Memory') {
+			if (this.options.type === 'Memory') {
 				rateLimiter = new RateLimiterMemory(libraryArguments)
 
 				console.log('Created RateLimiterMemory with keyPrefix =', keyPrefix)
-			} else if (limiterOptions.type === 'Redis') {
+			} else if (this.options.type === 'Redis') {
 				rateLimiter = new RateLimiterRedis(libraryArguments as IRateLimiterStoreOptions)
 
 				console.log('Created RateLimiterRedis with keyPrefix =', keyPrefix)
-			} else if (limiterOptions.type === 'Memcache') {
+			} else if (this.options.type === 'Memcache') {
 				rateLimiter = new RateLimiterMemcache(libraryArguments as IRateLimiterStoreOptions)
 
 				console.log('Created RateLimiterMemcache with keyPrefix =', keyPrefix)
-			} else if (limiterOptions.type === 'Postgres') {
+			} else if (this.options.type === 'Postgres') {
 				rateLimiter = await new Promise((resolve, reject) => {
 					const limiter = new RateLimiterPostgres(libraryArguments as IRateLimiterStoreOptions, (err) => {
 						if (err) {
@@ -68,7 +68,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				})
 
 				console.log('Created RateLimiterPostgres with keyPrefix =', keyPrefix)
-			} else if (limiterOptions.type === 'MySQL') {
+			} else if (this.options.type === 'MySQL') {
 				rateLimiter = await new Promise((resolve, reject) => {
 					const limiter = new RateLimiterMySQL(libraryArguments as IRateLimiterStoreOptions, (err) => {
 						if (err) {
@@ -88,9 +88,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
 			this.rateLimiters.set(keyPrefix, rateLimiter)
 		}
-
-		rateLimiter.errorMessage = limiterOptions.errorMessage || defaultRateLimiterOptions.errorMessage
-		rateLimiter.for = limiterOptions.for || defaultRateLimiterOptions.for
 
 		return rateLimiter
 	}
@@ -135,7 +132,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
 		const key = request.user ? request.user.id : request.ip
 
-		if (rateLimiter.for == 'Fastify') {
+		if (this.options.for == 'Fastify') {
 			try {
 				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
@@ -150,7 +147,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.code(429).header('Content-Type', 'application/json; charset=utf-8').send({
 					statusCode: HttpStatus.TOO_MANY_REQUESTS,
 					error: 'Too Many Requests',
-					message: rateLimiter.errorMessage
+					message: this.options.errorMessage
 				})
 			}
 		} else {
@@ -168,7 +165,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.status(429).json({
 					statusCode: HttpStatus.TOO_MANY_REQUESTS,
 					error: 'Too Many Requests',
-					message: rateLimiter.errorMessage
+					message: this.options.errorMessage
 				})
 			}
 		}

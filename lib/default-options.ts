@@ -6,5 +6,6 @@ export const defaultRateLimiterOptions: DefaultOptions = {
 	points: 4,
 	duration: 1,
 	pointsConsumed: 1,
+	keyPrefix: 'global',
 	errorMessage: 'Rate limit exceeded'
 }

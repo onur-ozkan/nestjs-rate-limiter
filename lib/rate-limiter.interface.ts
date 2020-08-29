@@ -9,9 +9,10 @@ export interface DefaultOptions {
 	duration?: number
 	pointsConsumed?: number
 	errorMessage?: string
+	keyPrefix?: string
 }
 
-export interface RateLimiterModuleOptions extends Partial<IRateLimiterMongoOptions>, DefaultOptions {}
+export interface RateLimiterModuleOptions extends DefaultOptions {}
 
 export interface RateLimiterOptionsFactory {
 	createRateLimiterOptions(): Promise<RateLimiterModuleOptions> | RateLimiterModuleOptions
