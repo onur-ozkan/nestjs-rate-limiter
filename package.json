@@ -1,10 +1,10 @@
 {
   "name": "nestjs-rate-limiter",
-  "version": "1.0.1",
-  "description": "A configurable rate limiter for NestJS",
+  "version": "2.0.0-beta",
+  "description": " A highly configurable rate limiter library",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RyanTheAllmighty/nestjs-rate-limiter.git"
+    "url": "git+https://github.com/ozkanonur/nestjs-rate-limiter.git"
   },
   "keywords": [
     "nestjs",
@@ -13,11 +13,15 @@
     "limit"
   ],
   "author": "Ryan Dowling <ryan@ryandowling.me>",
+  "contributors": [
+    "Ryan Dowling <ryan@ryandowling.me>",
+    "Onur Ozkan <onurozkan.dev@outlook.com>"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter/issues"
+    "url": "https://github.com/ozkanonur/nestjs-rate-limiter/issues"
   },
-  "homepage": "https://github.com/RyanTheAllmighty/nestjs-rate-limiter#readme",
+  "homepage": "https://github.com/ozkanonur/nestjs-rate-limiter#readme",
   "publishConfig": {
     "access": "public"
   },
@@ -31,25 +35,10 @@
     "prepublishOnly": "npm run build",
     "release": "np"
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged",
-      "pre-push": "npm test"
-    }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add -f"
-    ]
-  },
   "dependencies": {
-    "rate-limiter-flexible": "^1.0.2"
+    "rate-limiter-flexible": "^2.1.10"
   },
   "devDependencies": {
-    "@commitlint/cli": "^8.0.0",
-    "@commitlint/config-conventional": "^8.0.0",
     "@nestjs/common": "^6.3.1",
     "@nestjs/core": "^6.3.1",
     "@types/jest": "^24.0.15",
