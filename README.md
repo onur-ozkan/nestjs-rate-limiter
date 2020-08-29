@@ -31,7 +31,7 @@ yarn add nestjs-rate-limiter
 
 ### Requirements
 
-`nestjs-rate-limiter` is built to work with NestJS 6.x versions.
+`nestjs-rate-limiter` is built to work with NestJS 6.x &> versions.
 
 ## Usage
 
@@ -96,7 +96,7 @@ route basis:
 ```ts
 import { RateLimit } from 'nestjs-rate-limiter';
 
-@RateLimit({ points: 1, duration: 60 })
+@RateLimit({ points: 1, duration: 60, errorMessage: 'Accounts cannot be created more than once in per minute' })
 @Get('/signup')
 public async signUp() {
     console.log('hello');
@@ -117,7 +117,16 @@ duplicate `keyPrefix` or reuse the same class and method names with the decorato
 
 ## Configuration
 
-By default, the rate limiter will limit requests to 4 requests per 1 second window, using an in memory cache.
+### Constructor Options
+| Option Name | Required | Type | Default |
+| ------ | ------ | ------ | ------|
+| for | false | 'Express' - 'Fastify' - 'Microservice' | 'Express' |
+| type | false | 'Memory' - 'Redis' - 'Memcache' - 'Postgres' - 'MySQL' | 'Memory' |
+| points | false | number | 4 |
+| duration | false | number | 1 |
+| pointsConsumed | false | number | 1 |
+| keyPrefix | false | string | 'global' |
+| errorMessage | false | string | 'Rate limit exceeded' |
 
 To change the settings for `nestjs-rate-limiter`, you can define a `RateLimiterModuleOptions` object when registering
 the module:
@@ -128,11 +137,13 @@ the module:
 @Module({
     imports: [
         RateLimiterModule.register({
-            for: 'Express',
+            for: 'Fastify',
             type: 'Memory',
-            points: 100,
-            duration: 60,
+            points: 15,
+            duration: 90,
+            pointsConsumed: 1,
             keyPrefix: 'global',
+            errorMessage: 'Rate limit exceeded, you have to wait before trying again'
         }),
     ],
     providers: [
@@ -152,12 +163,19 @@ config needed. For a full list see <https://github.com/animir/node-rate-limiter-
 
 The main important options (and the ones used solely by this library) are below.
 
-### type: string
+### for: 'Express' | 'Fastify' | 'Microservice'
+
+This is the value which is based technology of your project. The default Nest applications are Express therefore this value is also comes with Express value as default.
+
+See official documentation for other supported technologies other than Express:
+
+-   [Fastify](https://docs.nestjs.com/techniques/performance)
+-   [Microservices](https://docs.nestjs.com/microservices/basics)
+
+### type: 'Memory' | 'Redis' | 'Memcached' | 'Postgres' | 'MySQL'
 
 This is the type of rate limiter that the underlying `rate-limiter-flexible` library will use to keep track of the
 requests made by users.
-
-Valid values for this library are:
 
 -   [Memory](https://github.com/animir/node-rate-limiter-flexible/wiki/Memory)
 -   [Redis](https://github.com/animir/node-rate-limiter-flexible/wiki/Redis)
@@ -210,6 +228,12 @@ By default, if you don't set this up, the underlying library will use a `keyPref
 
 For instance if you have the decorator on a controller, the `keyPrefix` will be the controllers name. If used on a
 route, it will be a combination of the controllers name and the route functions name.
+
+
+### errorMessage: string
+
+The value that overrides error messages on Rate Limit exceptions.
+
 
 ## Examples
 
