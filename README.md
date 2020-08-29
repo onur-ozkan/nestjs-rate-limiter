@@ -128,6 +128,8 @@ the module:
 @Module({
     imports: [
         RateLimiterModule.register({
+            for: 'Express',
+            type: 'Memory',
             points: 100,
             duration: 60,
             keyPrefix: 'global',
