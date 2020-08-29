@@ -1,6 +1,6 @@
 {
   "name": "nestjs-rate-limiter",
-  "version": "2.0.0-beta",
+  "version": "2.0.0",
   "description": " A highly configurable rate limiter library",
   "repository": {
     "type": "git",
@@ -12,6 +12,7 @@
     "rate",
     "limit"
   ],
+  "main": "dist/index.js",
   "author": "Ryan Dowling <ryan@ryandowling.me>",
   "contributors": [
     "Ryan Dowling <ryan@ryandowling.me>",
@@ -29,30 +30,22 @@
     "lib": "lib"
   },
   "scripts": {
-    "prebuild": "rimraf dist/",
+    "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.json",
-    "test": "jest --passWithNoTests",
-    "prepublishOnly": "npm run build",
-    "release": "np"
+    "lint": "prettier --write lib"
   },
   "dependencies": {
     "rate-limiter-flexible": "^2.1.10"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.3.1",
-    "@nestjs/core": "^6.3.1",
-    "@types/jest": "^24.0.15",
-    "husky": "^2.4.1",
-    "jest": "^24.8.0",
-    "lint-staged": "^8.2.1",
-    "np": "^5.0.3",
-    "prettier": "^1.18.2",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^2.6.3",
-    "rxjs": "^6.5.2",
-    "ts-jest": "^24.0.2",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.2"
+    "@nestjs/common": "latest",
+    "@nestjs/core": "latest",
+    "@types/jest": "^26.0.10",
+    "prettier": "^2.1.1",
+    "reflect-metadata": "0.1.13",
+    "rxjs": "^6.6.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^6.0.0",
