@@ -9,8 +9,9 @@
   "keywords": [
     "nestjs",
     "nest",
-    "rate",
-    "limit"
+    "rate-limiter",
+    "request-limiter",
+    "security"
   ],
   "main": "dist/index.js",
   "author": "Ryan Dowling <ryan@ryandowling.me>",
@@ -25,9 +26,6 @@
   "homepage": "https://github.com/ozkanonur/nestjs-rate-limiter#readme",
   "publishConfig": {
     "access": "public"
-  },
-  "directories": {
-    "lib": "lib"
   },
   "scripts": {
     "prebuild": "rm -rf dist",
