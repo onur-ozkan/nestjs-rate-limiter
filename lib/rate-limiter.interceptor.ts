@@ -20,7 +20,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
 
 	constructor(
-		@Inject('RATE_LIMITER_OPTIONS') private readonly options: RateLimiterModuleOptions,
+		@Inject('RATE_LIMITER_OPTIONS') private options: RateLimiterModuleOptions,
 		@Inject('Reflector') private readonly reflector: Reflector
 	) {
 		this.options = { ...defaultRateLimiterOptions, ...this.options }
@@ -30,6 +30,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		keyPrefix: string,
 		options?: RateLimiterModuleOptions
 	): Promise<RateLimiterMemory & { for?: 'Express' | 'Fastify' | 'Microservice'; errorMessage?: string }> {
+		this.options = { ...this.options, ...options }
+
 		let rateLimiter: RateLimiterMemory & {
 			for?: 'Express' | 'Fastify' | 'Microservice'
 			errorMessage?: string
@@ -93,7 +95,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		return rateLimiter
 	}
 
-	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
 		let points: number = this.options.points
 		let pointsConsumed: number = this.options.pointsConsumed
 		let keyPrefix: string = this.options.keyPrefix
@@ -142,7 +144,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 				response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 
-				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.code(429).header('Content-Type', 'application/json; charset=utf-8').send({
@@ -160,7 +161,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 				response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 
-				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.status(429).json({
@@ -170,5 +170,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				})
 			}
 		}
+		return next.handle()
 	}
 }
