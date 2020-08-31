@@ -95,7 +95,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		return rateLimiter
 	}
 
-	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
+	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
 		let points: number = this.options.points
 		let pointsConsumed: number = this.options.pointsConsumed
 		let keyPrefix: string = this.options.keyPrefix
