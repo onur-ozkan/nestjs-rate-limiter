@@ -43,10 +43,10 @@ First you need to import this module into your main application module:
 > app.module.ts
 
 ```ts
-import { RateLimiterModule } from 'nestjs-rate-limiter'
+import { RateLimiterModule } from 'nestjs-rate-limiter';
 
 @Module({
-	imports: [RateLimiterModule]
+    imports: [RateLimiterModule],
 })
 export class ApplicationModule {}
 ```
@@ -72,17 +72,17 @@ Or you can choose to register the interceptor globally:
 > app.module.ts
 
 ```ts
-import { APP_INTERCEPTOR } from '@nestjs/core'
-import { RateLimiterModule, RateLimiterInterceptor } from 'nestjs-rate-limiter'
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { RateLimiterModule, RateLimiterInterceptor } from 'nestjs-rate-limiter';
 
 @Module({
-	imports: [RateLimiterModule],
-	providers: [
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RateLimiterInterceptor
-		}
-	]
+    imports: [RateLimiterModule],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
 })
 export class ApplicationModule {}
 ```
@@ -166,16 +166,15 @@ duplicate `keyPrefix` or reuse the same class and method names with the decorato
 # Configuration
 
 ### Constructor Options
-
-| Option Name    | Required | Type                                                   | Default               |
-| -------------- | -------- | ------------------------------------------------------ | --------------------- |
-| for            | false    | 'Express' - 'Fastify' - 'Microservice'                 | 'Express'             |
-| type           | false    | 'Memory' - 'Redis' - 'Memcache' - 'Postgres' - 'MySQL' | 'Memory'              |
-| points         | false    | number                                                 | 4                     |
-| duration       | false    | number                                                 | 1                     |
-| pointsConsumed | false    | number                                                 | 1                     |
-| keyPrefix      | false    | string                                                 | 'global'              |
-| errorMessage   | false    | string                                                 | 'Rate limit exceeded' |
+| Option Name | Required | Type | Default |
+| ------ | ------ | ------ | ------|
+| for | false | 'Express' - 'Fastify' - 'Microservice' | 'Express' |
+| type | false | 'Memory' - 'Redis' - 'Memcache' - 'Postgres' - 'MySQL' | 'Memory' |
+| points | false | number | 4 |
+| duration | false | number | 1 |
+| pointsConsumed | false | number | 1 |
+| keyPrefix | false | string | 'global' |
+| errorMessage | false | string | 'Rate limit exceeded' |
 
 To change the settings for `nestjs-rate-limiter`, you can define a `RateLimiterModuleOptions` object when registering
 the module:
@@ -184,23 +183,23 @@ the module:
 
 ```ts
 @Module({
-	imports: [
-		RateLimiterModule.register({
-			for: 'Fastify',
-			type: 'Memory',
-			points: 15,
-			duration: 90,
-			pointsConsumed: 1,
-			keyPrefix: 'global',
-			errorMessage: 'Rate limit exceeded, you have to wait before trying again'
-		})
-	],
-	providers: [
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RateLimiterInterceptor
-		}
-	]
+    imports: [
+        RateLimiterModule.register({
+            for: 'Fastify',
+            type: 'Memory',
+            points: 15,
+            duration: 90,
+            pointsConsumed: 1,
+            keyPrefix: 'global',
+            errorMessage: 'Rate limit exceeded, you have to wait before trying again'
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
 })
 export class ApplicationModule {}
 ```
@@ -273,9 +272,11 @@ unique, then they will share the same rate limit.
 For instance if you have the decorator on a controller, the `keyPrefix` will be the controllers name. If used on a
 route, it will be a combination of the controllers name and the route functions name.
 
+
 ### errorMessage: string
 
 The value that overrides error messages on Rate Limit exceptions.
+
 
 # Examples
 
@@ -297,25 +298,25 @@ Then you must create a client (offline queue must be turned off) and pass it via
 > app.module.ts
 
 ```ts
-import * as redis from 'redis'
-const redisClient = redis.createClient({ enable_offline_queue: false })
+import * as redis from 'redis';
+const redisClient = redis.createClient({ enable_offline_queue: false });
 
-import * as Redis from 'ioredis'
-const redisClient = new Redis({ enableOfflineQueue: false })
+import * as Redis from 'ioredis';
+const redisClient = new Redis({ enableOfflineQueue: false });
 
 @Module({
-	imports: [
-		RateLimiterModule.register({
-			type: 'Redis',
-			storeClient: redisClient
-		})
-	],
-	providers: [
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RateLimiterInterceptor
-		}
-	]
+    imports: [
+        RateLimiterModule.register({
+            type: 'Redis',
+            storeClient: redisClient,
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
 })
 export class ApplicationModule {}
 ```
@@ -333,22 +334,22 @@ Then you must create a client and pass it via the `storeClient` config option to
 > app.module.ts
 
 ```ts
-import * as Memcached from 'memcached'
-const memcachedClient = new Memcached('127.0.0.1:11211')
+import * as Memcached from 'memcached';
+const memcachedClient = new Memcached('127.0.0.1:11211');
 
 @Module({
-	imports: [
-		RateLimiterModule.register({
-			type: 'Memcached',
-			storeClient: memcachedClient
-		})
-	],
-	providers: [
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RateLimiterInterceptor
-		}
-	]
+    imports: [
+        RateLimiterModule.register({
+            type: 'Memcached',
+            storeClient: memcachedClient,
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
 })
 export class ApplicationModule {}
 ```
@@ -366,29 +367,29 @@ Then you must create a client and pass it via the `storeClient` config option to
 > app.module.ts
 
 ```ts
-import { Pool } from 'pg'
+import { Pool } from 'pg';
 const postgresClient = new Pool({
-	host: '127.0.0.1',
-	port: 5432,
-	database: 'root',
-	user: 'root',
-	password: 'secret'
-})
+    host: '127.0.0.1',
+    port: 5432,
+    database: 'root',
+    user: 'root',
+    password: 'secret',
+});
 
 @Module({
-	imports: [
-		RateLimiterModule.register({
-			type: 'Postgres',
-			storeClient: postgresClient,
-			tableName: 'rate_limiting' // not specifying this will create one table for each keyPrefix
-		})
-	],
-	providers: [
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RateLimiterInterceptor
-		}
-	]
+    imports: [
+        RateLimiterModule.register({
+            type: 'Postgres',
+            storeClient: postgresClient,
+            tableName: 'rate_limiting', // not specifying this will create one table for each keyPrefix
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
 })
 export class ApplicationModule {}
 ```
@@ -414,32 +415,32 @@ Then you must create a client and pass it via the `storeClient` config option to
 > app.module.ts
 
 ```ts
-import * as mysql from 'mysql'
+import * as mysql from 'mysql';
 
-import * as mysql from 'mysql2'
+import * as mysql from 'mysql2';
 
 const mysqlClient = mysql.createPool({
-	connectionLimit: 100,
-	host: 'localhost',
-	user: 'root',
-	password: 'secret'
-})
+    connectionLimit: 100,
+    host: 'localhost',
+    user: 'root',
+    password: 'secret',
+});
 
 @Module({
-	imports: [
-		RateLimiterModule.register({
-			type: 'MySQL',
-			storeClient: mysqlClient,
-			dbName: 'ratelimits',
-			tableName: 'rate_limiting' // not specifying this will create one table for each keyPrefix
-		})
-	],
-	providers: [
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RateLimiterInterceptor
-		}
-	]
+    imports: [
+        RateLimiterModule.register({
+            type: 'MySQL',
+            storeClient: mysqlClient,
+            dbName: 'ratelimits',
+            tableName: 'rate_limiting', // not specifying this will create one table for each keyPrefix
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
 })
 export class ApplicationModule {}
 ```
