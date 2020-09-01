@@ -95,6 +95,14 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		return rateLimiter
 	}
 
+	getRequest(context: ExecutionContext) {
+		return context.switchToHttp().getRequest()
+	}
+
+	getResponse(context: ExecutionContext) {
+		return context.switchToHttp().getResponse()
+	}
+
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
 		let points: number = this.options.points
 		let pointsConsumed: number = this.options.pointsConsumed
@@ -130,8 +138,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			errorMessage?: string
 		} = await this.getRateLimiter(keyPrefix, reflectedOptions)
 
-		const request = context.switchToHttp().getRequest()
-		const response = context.switchToHttp().getResponse()
+		const request = this.getRequest(context)
+		const response = this.getResponse(context)
 
 		const key = request.user ? request.user.id : request.ip
 
@@ -143,7 +151,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.header('X-RateLimit-Limit', points)
 				response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 				response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
-
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.code(429).header('Content-Type', 'application/json; charset=utf-8').send({
@@ -160,7 +167,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.set('X-RateLimit-Limit', points)
 				response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 				response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
-
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.status(429).json({
