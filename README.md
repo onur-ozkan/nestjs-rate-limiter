@@ -402,3 +402,9 @@ export class ApplicationModule {}
 Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
 an additional parameter as noted at
 <https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL#sequelize-and-knex-support>.
+
+## TODO
+- [ ] Fastify based Graphql Apps
+- [ ] Websocket
+- [ ] Rpc
+- [ ] Tests & Github Actions (for automatic npm deployment on master branch)
