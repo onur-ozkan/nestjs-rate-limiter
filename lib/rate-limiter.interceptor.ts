@@ -1,5 +1,4 @@
 import { Reflector } from '@nestjs/core'
-import { Observable } from 'rxjs'
 import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus, Logger } from '@nestjs/common'
 import {
 	RateLimiterMemory,
@@ -26,16 +25,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		this.options = { ...defaultRateLimiterOptions, ...this.options }
 	}
 
-	async getRateLimiter(
-		keyPrefix: string,
-		options?: RateLimiterModuleOptions
-	): Promise<RateLimiterMemory & { for?: 'Express' | 'Fastify' | 'Microservice'; errorMessage?: string }> {
+	async getRateLimiter(keyPrefix: string, options?: RateLimiterModuleOptions): Promise<RateLimiterMemory> {
 		this.options = { ...this.options, ...options }
 
-		let rateLimiter: RateLimiterMemory & {
-			for?: 'Express' | 'Fastify' | 'Microservice'
-			errorMessage?: string
-		} = this.rateLimiters.get(keyPrefix)
+		let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix)
 
 		const limiterOptions: RateLimiterModuleOptions = {
 			...this.options,
@@ -95,7 +88,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		return rateLimiter
 	}
 
-	async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
 		let points: number = this.options.points
 		let pointsConsumed: number = this.options.pointsConsumed
 		let keyPrefix: string = this.options.keyPrefix
@@ -125,17 +118,38 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			}
 		}
 
-		const rateLimiter: RateLimiterMemory & {
-			for?: 'Express' | 'Fastify' | 'Microservice'
-			errorMessage?: string
-		} = await this.getRateLimiter(keyPrefix, reflectedOptions)
+		const request = this.httpHandler(context).req
+		const response = this.httpHandler(context).res
 
-		const request = context.switchToHttp().getRequest()
-		const response = context.switchToHttp().getResponse()
+		const rateLimiter: RateLimiterMemory = await this.getRateLimiter(keyPrefix, reflectedOptions)
+		const key = request?.user ? request.user.id : request.ip
 
-		const key = request.user ? request.user.id : request.ip
+		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
+		return next.handle()
+	}
 
-		if (this.options.for == 'Fastify') {
+	private httpHandler(context: ExecutionContext) {
+		if (this.options.for === 'ExpressGraphql') {
+			return {
+				req: context.getArgByIndex(2).req,
+				res: context.getArgByIndex(2).req.res
+			}
+		} else {
+			return {
+				req: context.switchToHttp().getRequest(),
+				res: context.switchToHttp().getResponse()
+			}
+		}
+	}
+
+	private async responseHandler(
+		response: any,
+		key: any,
+		rateLimiter: RateLimiterMemory,
+		points: number,
+		pointsConsumed: number
+	) {
+		if (this.options.for === 'Fastify') {
 			try {
 				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
@@ -143,7 +157,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.header('X-RateLimit-Limit', points)
 				response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 				response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
-
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.code(429).header('Content-Type', 'application/json; charset=utf-8').send({
@@ -160,7 +173,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.set('X-RateLimit-Limit', points)
 				response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 				response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
-
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.status(429).json({
@@ -170,6 +182,5 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				})
 			}
 		}
-		return next.handle()
 	}
 }

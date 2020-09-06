@@ -121,7 +121,7 @@ duplicate `keyPrefix` or reuse the same class and method names with the decorato
 ### Constructor Options
 | Option Name | Required | Type | Default |
 | ------ | ------ | ------ | ------|
-| for | false | 'Express' - 'Fastify' - 'Microservice' | 'Express' |
+| for | false | 'Express' - 'Fastify' - 'Microservice' - 'ExpressGraphql' | 'Express' |
 | type | false | 'Memory' - 'Redis' - 'Memcache' - 'Postgres' - 'MySQL' | 'Memory' |
 | points | false | number | 4 |
 | duration | false | number | 1 |
@@ -164,7 +164,7 @@ config needed. For a full list see <https://github.com/animir/node-rate-limiter-
 
 The main important options (and the ones used solely by this library) are below.
 
-### for: 'Express' | 'Fastify' | 'Microservice'
+### for: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql'
 
 This is the value which is based technology of your project. The default Nest applications are Express therefore this value is also comes with Express value as default.
 
@@ -172,6 +172,7 @@ See official documentation for other supported technologies other than Express:
 
 -   [Fastify](https://docs.nestjs.com/techniques/performance)
 -   [Microservices](https://docs.nestjs.com/microservices/basics)
+-   [Graphql](https://docs.nestjs.com/graphql/quick-start)
 
 ### type: 'Memory' | 'Redis' | 'Memcached' | 'Postgres' | 'MySQL'
 
@@ -401,3 +402,9 @@ export class ApplicationModule {}
 Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
 an additional parameter as noted at
 <https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL#sequelize-and-knex-support>.
+
+## TODO
+- [ ] Fastify based Graphql Apps
+- [ ] Websocket
+- [ ] Rpc
+- [ ] Tests & Github Actions (for automatic npm deployment on master branch)
