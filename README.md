@@ -404,7 +404,7 @@ an additional parameter as noted at
 <https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL#sequelize-and-knex-support>.
 
 ## TODO
-- [ ] Fastify based Graphql Apps
-- [ ] Websocket
-- [ ] Rpc
+- [ ] Support Fastify based Graphql Apps
+- [ ] Support Websocket
+- [ ] Support Rpc
 - [ ] Tests & Github Actions (for automatic npm deployment on master branch)
