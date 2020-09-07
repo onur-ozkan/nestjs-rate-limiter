@@ -134,6 +134,11 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				req: context.getArgByIndex(2).req,
 				res: context.getArgByIndex(2).req.res
 			}
+		} else if (this.options.for === 'FastifyGraphql') {
+			return {
+				req: context.getArgByIndex(2).req,
+				res: context.getArgByIndex(2).res
+			}
 		} else {
 			return {
 				req: context.switchToHttp().getRequest(),
@@ -149,7 +154,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		points: number,
 		pointsConsumed: number
 	) {
-		if (this.options.for === 'Fastify') {
+		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
 			try {
 				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
