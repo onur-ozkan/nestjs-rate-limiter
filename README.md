@@ -128,12 +128,22 @@ Also note that if the `keyPrefix` is already in use, it will not update any opti
 limiter object when it was last instantiated. This should be fine with the decorators, unless you manually specify a
 duplicate `keyPrefix` or reuse the same class and method names with the decorator.
 
+### Graphql (Fastify)
+If you want to use this library on a fastify based graphql server, you need to override the graphql context in the app.module as shown below.
+```ts
+GraphQLModule.forRoot({
+    context: ({ request, reply }) => {
+        return { req: request, res: reply }
+    },
+}),
+```
+
 # Configuration
 
 ### Constructor Options
 | Option Name | Required | Type | Default |
 | ------ | ------ | ------ | ------|
-| for | false | 'Express' - 'Fastify' - 'Microservice' - 'ExpressGraphql' | 'Express' |
+| for | false | 'Express' - 'Fastify' - 'Microservice' - 'ExpressGraphql' - 'FastifyGraphql' | 'Express' |
 | type | false | 'Memory' - 'Redis' - 'Memcache' - 'Postgres' - 'MySQL' | 'Memory' |
 | points | false | number | 4 |
 | duration | false | number | 1 |
@@ -176,7 +186,7 @@ config needed. For a full list see <https://github.com/animir/node-rate-limiter-
 
 The main important options (and the ones used solely by this library) are below.
 
-### for: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql'
+### for: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
 
 This is the value which is based technology of your project. The default Nest applications are Express therefore this value is also comes with Express value as default.
 
@@ -416,7 +426,6 @@ an additional parameter as noted at
 <https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL#sequelize-and-knex-support>.
 
 ## TODO
-- [ ] Support Fastify based Graphql Apps
 - [ ] Support Websocket
 - [ ] Support Rpc
 - [ ] Tests & Github Actions (for automatic npm deployment on master branch)

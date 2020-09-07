@@ -1,9 +1,8 @@
 import { Provider } from '@nestjs/common'
-import { IRateLimiterMongoOptions } from 'rate-limiter-flexible'
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces'
 
 export interface DefaultOptions {
-	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql'
+	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
 	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL'
 	points?: number
 	duration?: number
