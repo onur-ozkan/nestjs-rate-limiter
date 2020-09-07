@@ -12,6 +12,18 @@
 
 </p>
 
+# Documentation Map
+- [Description](https://github.com/ozkanonur/nestjs-rate-limiter#description)
+- [Installation](https://github.com/ozkanonur/nestjs-rate-limiter#installation)
+- [Usage](https://github.com/ozkanonur/nestjs-rate-limiter#usage)
+- [Configuration](https://github.com/ozkanonur/nestjs-rate-limiter#configuration)
+- [Examples](https://github.com/ozkanonur/nestjs-rate-limiter#examples)
+  - [Redis](https://github.com/ozkanonur/nestjs-rate-limiter#with-redis)
+  - [Memcache](https://github.com/ozkanonur/nestjs-rate-limiter#with-memcache)
+  - [Postgres](https://github.com/ozkanonur/nestjs-rate-limiter#with-postgres)
+  - [MySQL](https://github.com/ozkanonur/nestjs-rate-limiter#with-mysql)
+- [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
+
 # Description
 
 `nestjs-rate-limiter` is a module which adds in configurable rate limiting for [Nest](https://github.com/nestjs/nest) applications.
