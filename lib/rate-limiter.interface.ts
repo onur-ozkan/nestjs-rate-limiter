@@ -3,7 +3,7 @@ import { ModuleMetadata, Type } from '@nestjs/common/interfaces'
 
 export interface RateLimiterOptions {
 	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
-	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo' | 'Cluster' | 'Union' | 'BlackAndWhite' | 'FiFo'
+	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo' | 'Queue'
 	keyPrefix?: string
 	points?: number
 	pointsConsumed?: number
@@ -11,6 +11,8 @@ export interface RateLimiterOptions {
 	duration?: number
 	blockDuration?: number
 	inmemoryBlockOnConsumed?: number
+	whiteList?: string[]
+	blackList?: string[]
 	storeClient?: any
 	insuranceLimiter?: any
 	storeType?: string
@@ -21,7 +23,8 @@ export interface RateLimiterOptions {
 	execEvenly?: boolean
 	execEvenlyMinDelayMs?: any
 	indexKeyPrefix?: any
-	timeoutMs?: any
+	maxQueueSize?: number
+	timeoutMs?: number
 	errorMessage?: string
 }
 

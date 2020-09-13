@@ -9,25 +9,27 @@ import {
 	RateLimiterMemcache,
 	RateLimiterPostgres,
 	RateLimiterMySQL,
-	RateLimiterMongo
+	RateLimiterMongo,
+	RateLimiterQueue,
+	RLWrapperBlackAndWhite
 } from 'rate-limiter-flexible'
-
 import { RateLimiterOptions } from './rate-limiter.interface'
 import { defaultRateLimiterOptions } from './default-options'
 
 @Injectable()
 export class RateLimiterInterceptor implements NestInterceptor {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
+	private queueLimiter: RateLimiterQueue
 
 	constructor(@Inject('RATE_LIMITER_OPTIONS') private options: RateLimiterOptions, @Inject('Reflector') private readonly reflector: Reflector) {
 		this.options = { ...defaultRateLimiterOptions, ...this.options }
 		this.options.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
 	}
 
-	async getRateLimiter(keyPrefix: string, options?: RateLimiterOptions): Promise<RateLimiterMemory> {
+	async getRateLimiter(keyPrefix: string, options?: RateLimiterOptions): Promise<RateLimiterAbstract> {
 		this.options = { ...this.options, ...options }
 
-		let rateLimiter: RateLimiterMemory = this.rateLimiters.get(keyPrefix)
+		let rateLimiter: RateLimiterAbstract = this.rateLimiters.get(keyPrefix)
 
 		const limiterOptions: RateLimiterOptions = {
 			...this.options,
@@ -95,12 +97,28 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					rateLimiter = new RateLimiterMongo(libraryArguments as IRateLimiterStoreOptions)
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMongo')
 					break
+				case 'Queue':
+					rateLimiter = new RateLimiterMemory(libraryArguments)
+
+					this.queueLimiter = new RateLimiterQueue(rateLimiter, {
+						maxQueueSize: this.options.maxQueueSize
+					})
+
+					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterQueue')
+					break
 				default:
 					throw new Error(`Invalid "type" option provided to RateLimiterInterceptor. Value was ${limiterOptions.type}`)
 			}
 
 			this.rateLimiters.set(keyPrefix, rateLimiter)
 		}
+
+		rateLimiter = new RLWrapperBlackAndWhite({
+			limiter: rateLimiter,
+			whiteList: this.options.whiteList,
+			blackList: this.options.blackList,
+			runActionAnyway: false
+		})
 
 		return rateLimiter
 	}
@@ -135,8 +153,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		const request = this.httpHandler(context).req
 		const response = this.httpHandler(context).res
 
-		const rateLimiter: RateLimiterMemory = await this.getRateLimiter(keyPrefix, reflectedOptions)
-		const key = request?.user ? request.user.id : request.ip
+		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(keyPrefix, reflectedOptions)
+		const key = request.ip.replace(/^.*:/, '')
 
 		const process = await this.responseHandler(response, key, rateLimiter, points, pointsConsumed, next)
 		return process
@@ -161,15 +179,18 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		}
 	}
 
-	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterMemory, points: number, pointsConsumed: number, next: CallHandler) {
+	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number, next: CallHandler) {
 		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
 			try {
-				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
+				if (this.options.type === 'Queue') await this.queueLimiter.removeTokens(1)
+				else {
+					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
-				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				response.header('X-RateLimit-Limit', points)
-				response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
-				response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
+					response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
+					response.header('X-RateLimit-Limit', points)
+					response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
+					response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
+				}
 				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
@@ -181,12 +202,15 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			}
 		} else {
 			try {
-				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
+				if (this.options.type === 'Queue') await this.queueLimiter.removeTokens(1)
+				else {
+					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
-				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				response.set('X-RateLimit-Limit', points)
-				response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
-				response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
+					response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
+					response.set('X-RateLimit-Limit', points)
+					response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
+					response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
+				}
 				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))

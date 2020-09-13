@@ -10,6 +10,8 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	duration: 1,
 	blockDuration: 0,
 	inmemoryBlockDuration: 0,
+	whiteList: [],
+	blackList: [],
 	storeClient: undefined,
 	insuranceLimiter: undefined,
 	storeType: undefined,
@@ -20,6 +22,7 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	execEvenly: false,
 	execEvenlyMinDelayMs: undefined,
 	indexKeyPrefix: {},
+	maxQueueSize: 100,
 	timeoutMs: 5000,
 	errorMessage: 'Rate limit exceeded'
 }
