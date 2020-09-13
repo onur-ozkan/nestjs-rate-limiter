@@ -1,26 +1,41 @@
 import { Provider } from '@nestjs/common'
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces'
 
-export interface DefaultOptions {
+export interface RateLimiterOptions {
 	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
-	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL'
-	points?: number
-	duration?: number
-	pointsConsumed?: number
-	errorMessage?: string
+	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo'
 	keyPrefix?: string
+	points?: number
+	pointsConsumed?: number
+	inmemoryBlockDuration?: number
+	duration?: number
+	blockDuration?: number
+	inmemoryBlockOnConsumed?: number
+	queueEnabled?: boolean
+	whiteList?: string[]
+	blackList?: string[]
+	storeClient?: any
+	insuranceLimiter?: any
+	storeType?: string
+	dbName?: string
+	tableName?: string
+	tableCreated?: boolean
+	clearExpiredByTimeout?: boolean
+	execEvenly?: boolean
+	execEvenlyMinDelayMs?: number
+	indexKeyPrefix?: {}
+	maxQueueSize?: number
+	errorMessage?: string
 }
 
-export interface RateLimiterModuleOptions extends DefaultOptions {}
-
 export interface RateLimiterOptionsFactory {
-	createRateLimiterOptions(): Promise<RateLimiterModuleOptions> | RateLimiterModuleOptions
+	createRateLimiterOptions(): Promise<RateLimiterOptions> | RateLimiterOptions
 }
 
 export interface RateLimiterModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
 	useExisting?: Type<RateLimiterOptionsFactory>
 	useClass?: Type<RateLimiterOptionsFactory>
-	useFactory?: (...args: any[]) => Promise<RateLimiterModuleOptions> | RateLimiterModuleOptions
+	useFactory?: (...args: any[]) => Promise<RateLimiterOptions> | RateLimiterOptions
 	inject?: any[]
 	extraProviders?: Provider[]
 }

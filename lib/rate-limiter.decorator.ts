@@ -1,5 +1,4 @@
 import { SetMetadata } from '@nestjs/common'
+import { RateLimiterOptions } from './rate-limiter.interface'
 
-import { RateLimiterModuleOptions } from './rate-limiter.interface'
-
-export const RateLimit = (options: RateLimiterModuleOptions): MethodDecorator => SetMetadata('rateLimit', options)
+export const RateLimit = (options: RateLimiterOptions): MethodDecorator => SetMetadata('rateLimit', options)

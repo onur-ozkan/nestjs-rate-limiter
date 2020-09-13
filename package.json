@@ -1,7 +1,7 @@
 {
   "name": "nestjs-rate-limiter",
-  "version": "2.3.0",
-  "description": "Highly configurable a rate limiter library",
+  "version": "2.4.0",
+  "description": "Highly configurable rate limiter library",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ozkanonur/nestjs-rate-limiter.git"
@@ -33,20 +33,15 @@
     "lint": "prettier --write lib"
   },
   "dependencies": {
-    "rate-limiter-flexible": "^2.1.10"
+    "rate-limiter-flexible": "2.1.10"
   },
   "devDependencies": {
     "@nestjs/common": "latest",
     "@nestjs/core": "latest",
-    "@types/jest": "^26.0.10",
     "prettier": "^2.1.1",
     "reflect-metadata": "0.1.13",
     "rxjs": "^6.6.2",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^6.0.0",
-    "@nestjs/core": "^6.0.0"
   }
 }

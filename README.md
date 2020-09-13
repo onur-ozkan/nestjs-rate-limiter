@@ -15,13 +15,38 @@
 # Documentation Map
 - [Description](https://github.com/ozkanonur/nestjs-rate-limiter#description)
 - [Installation](https://github.com/ozkanonur/nestjs-rate-limiter#installation)
-- [Usage](https://github.com/ozkanonur/nestjs-rate-limiter#usage)
-- [Configuration](https://github.com/ozkanonur/nestjs-rate-limiter#configuration)
-- [Examples](https://github.com/ozkanonur/nestjs-rate-limiter#examples)
-  - [Redis](https://github.com/ozkanonur/nestjs-rate-limiter#with-redis)
-  - [Memcache](https://github.com/ozkanonur/nestjs-rate-limiter#with-memcache)
-  - [Postgres](https://github.com/ozkanonur/nestjs-rate-limiter#with-postgres)
-  - [MySQL](https://github.com/ozkanonur/nestjs-rate-limiter#with-mysql)
+- [Basic Usage](https://github.com/ozkanonur/nestjs-rate-limiter#basic-usage)
+  - [Include Module](https://github.com/ozkanonur/nestjs-rate-limiter#include-module)
+  - [Using Interceptor](https://github.com/ozkanonur/nestjs-rate-limiter#using-interceptor)
+  - [With Decorator](https://github.com/ozkanonur/nestjs-rate-limiter#with-decorator)
+  - [With All Options](https://github.com/ozkanonur/nestjs-rate-limiter#with-all-options)
+  - [Fastify based Graphql](https://github.com/ozkanonur/nestjs-rate-limiter#fastify-based-graphql)
+- [Options](https://github.com/ozkanonur/nestjs-rate-limiter#options)
+  - [for](https://github.com/ozkanonur/nestjs-rate-limiter#for)
+  - [type](https://github.com/ozkanonur/nestjs-rate-limiter#type)
+  - [keyPrefix](https://github.com/ozkanonur/nestjs-rate-limiter#keyPrefix)
+  - [points](https://github.com/ozkanonur/nestjs-rate-limiter#points)
+  - [pointsConsumed](https://github.com/ozkanonur/nestjs-rate-limiter#pointsConsumed)
+  - [inmemoryBlockOnConsumed](https://github.com/ozkanonur/nestjs-rate-limiter#inmemoryBlockOnConsumed)
+  - [duration](https://github.com/ozkanonur/nestjs-rate-limiter#duration)
+  - [blockDuration](https://github.com/ozkanonur/nestjs-rate-limiter#blockDuration)
+  - [inmemoryBlockDuration](https://github.com/ozkanonur/nestjs-rate-limiter#inmemoryBlockDuration)
+  - [queueEnabled](https://github.com/ozkanonur/nestjs-rate-limiter#queueEnabled)
+  - [whiteList](https://github.com/ozkanonur/nestjs-rate-limiter#whiteList)
+  - [blackList](https://github.com/ozkanonur/nestjs-rate-limiter#blackList)
+  - [storeClient](https://github.com/ozkanonur/nestjs-rate-limiter#storeClient)
+  - [insuranceLimiter](https://github.com/ozkanonur/nestjs-rate-limiter#insuranceLimiter)
+  - [storeType](https://github.com/ozkanonur/nestjs-rate-limiter#storeType)
+  - [dbName](https://github.com/ozkanonur/nestjs-rate-limiter#dbName)
+  - [tableName](https://github.com/ozkanonur/nestjs-rate-limiter#tableName)
+  - [tableCreated](https://github.com/ozkanonur/nestjs-rate-limiter#tableCreated)
+  - [clearExpiredByTimeout](https://github.com/ozkanonur/nestjs-rate-limiter#clearExpiredByTimeout)
+  - [execEvenly](https://github.com/ozkanonur/nestjs-rate-limiter#execEvenly)
+  - [execEvenlyMinDelayMs](https://github.com/ozkanonur/nestjs-rate-limiter#execEvenlyMinDelayMs)
+  - [indexKeyPrefix](https://github.com/ozkanonur/nestjs-rate-limiter#indexKeyPrefix)
+  - [maxQueueSize](https://github.com/ozkanonur/nestjs-rate-limiter#maxQueueSize)
+  - [errorMessage](https://github.com/ozkanonur/nestjs-rate-limiter#errorMessage)
+- [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
 - [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
 
 # Description
@@ -42,11 +67,11 @@ Or if you use Yarn:
 yarn add nestjs-rate-limiter
 ```
 
-### Requirements
+# Requirements
 
 `nestjs-rate-limiter` is built to work with Nest 6 and newer versions.
 
-# Usage
+# Basic Usage
 
 ### Include Module
 
@@ -99,7 +124,7 @@ import { RateLimiterModule, RateLimiterInterceptor } from 'nestjs-rate-limiter';
 export class ApplicationModule {}
 ```
 
-### Decorator
+### With Decorator
 
 You can use the `@RateLimit` decorator to specify the points and duration for rate limiting on a per controller or per
 route basis:
@@ -116,19 +141,52 @@ public async signUp() {
 }
 ```
 
-The above example would rate limit the `/signup` route to 1 request every 60 seconds.
+### With All Options
 
-Note that when passing in options via the decorator, it will combine the options for the module (defined via
-`RateLimiterModule.register` or the default ones) along with the decorator options. While this should be fine for most
-use cases, if you have defined a global interceptor with a `pointsConsumed` option, that will also apply to all
-decorated requests. So if you need to have a different `pointsConsumed` for decorated requests than what you have
-defined globally, you must pass it in when writing your decorator.
+The usage of the limiter options is as in the code block below. For an explanation of the each option, please see <code>[options](https://github.com/ozkanonur/nestjs-rate-limiter#options)</code>.
 
-Also note that if the `keyPrefix` is already in use, it will not update any options, only reuse the existing rate
-limiter object when it was last instantiated. This should be fine with the decorators, unless you manually specify a
-duplicate `keyPrefix` or reuse the same class and method names with the decorator.
+```ts
+@Module({
+    imports: [
+        // All the values here are defaults.
+        RateLimiterModule.register({
+            for: 'Express',
+            type: 'Memory',
+            keyPrefix: 'global',
+            points: 4,
+            pointsConsumed: 1,
+            inmemoryBlockOnConsumed: 0,
+            duration: 1,
+            blockDuration: 0,
+            inmemoryBlockDuration: 0,
+            queueEnabled: false,
+            whiteList: [],
+            blackList: [],
+            storeClient: undefined,
+            insuranceLimiter: undefined,
+            storeType: undefined,
+            dbName: undefined,
+            tableName: undefined,
+            tableCreated: undefined,
+            clearExpiredByTimeout: undefined,
+            execEvenly: false,
+            execEvenlyMinDelayMs: undefined,
+            indexKeyPrefix: {},
+            maxQueueSize: 100,
+            errorMessage: 'Rate limit exceeded'
+        }),
+    ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RateLimiterInterceptor,
+        },
+    ],
+})
+export class ApplicationModule {}
+```
 
-### Graphql (Fastify)
+### Fastify based Graphql
 If you want to use this library on a fastify based graphql server, you need to override the graphql context in the app.module as shown below.
 ```ts
 GraphQLModule.forRoot({
@@ -138,294 +196,202 @@ GraphQLModule.forRoot({
 }),
 ```
 
-# Configuration
+# Options
 
-### Constructor Options
-| Option Name | Required | Type | Default |
-| ------ | ------ | ------ | ------|
-| for | false | 'Express' - 'Fastify' - 'Microservice' - 'ExpressGraphql' - 'FastifyGraphql' | 'Express' |
-| type | false | 'Memory' - 'Redis' - 'Memcache' - 'Postgres' - 'MySQL' | 'Memory' |
-| points | false | number | 4 |
-| duration | false | number | 1 |
-| pointsConsumed | false | number | 1 |
-| keyPrefix | false | string | 'global' |
-| errorMessage | false | string | 'Rate limit exceeded' |
+- #### for
+    <code> Default: 'Express'</code>
+    <code> Type: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'</code>
+    <br>
 
-To change the settings for `nestjs-rate-limiter`, you can define a `RateLimiterModuleOptions` object when registering
-the module:
+    In this option, you specify what the technology is running under the Nest application. The wrong value causes to limiter not working.
 
-> app.module.ts
+- #### type
+    <code> Default: 'Memory'</code>
+    <code> Type: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo'</code>
+    <br>
 
-```ts
-@Module({
-    imports: [
-        RateLimiterModule.register({
-            for: 'Fastify',
-            type: 'Memory',
-            points: 15,
-            duration: 90,
-            pointsConsumed: 1,
-            keyPrefix: 'global',
-            errorMessage: 'Rate limit exceeded, you have to wait before trying again'
-        }),
-    ],
-    providers: [
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
-        },
-    ],
-})
-export class ApplicationModule {}
+    Here you define where the limiter data will be stored. Each option plays a different role in limiter performance, to see that please check [benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks).
+- #### keyPrefix
+    <code> Default: 'global'</code>
+    <code> Type: string</code>
+    <br>
+
+    For creating several limiters with different options to apply different modules/endpoints.
+
+    Set to empty string '', if keys should be stored without prefix.
+
+    Note: for some limiters it should correspond to Storage requirements for tables or collections name, as keyPrefix may be used as their name.
+- #### points
+    <code> Default: 4</code>
+    <code> Type: number</code>
+    <br>
+
+    Maximum number of points can be consumed over duration
+- #### pointsConsumed
+    <code> Default: 1</code>
+    <code> Type: number</code>
+    <br>
+
+    You can consume more than 1 point per invocation of the rate limiter.
+
+    For instance if you have a limit of 100 points per 60 seconds, and pointsConsumed is set to 10, the user will effectively be able to make 10 requests per 60 seconds.
+- #### inmemoryBlockOnConsumed
+    <code> Default: 0</code>
+    <code> Type: number</code>
+    <br>
+
+    For Redis, Memcached, MongoDB, MySQL, PostgreSQL, etc.
+
+    Can be used against DDoS attacks. In-memory blocking works in current process memory and for consume method only.
+
+    It blocks a key in memory for msBeforeNext milliseconds from the last consume result, if inmemoryBlockDuration is not set. This helps to avoid extra requests. It is not necessary to increment counter on store, if all points are consumed already.
+- #### duration
+    <code> Default: 1</code>
+    <code> Type: number</code>
+    <br>
+
+    Number of seconds before consumed points are reset.
+
+    Keys never expire, if duration is 0.
+- #### blockDuration
+    <code> Default: 0</code>
+    <code> Type: number</code>
+    <br>
+
+    If positive number and consumed more than points in current duration, block for blockDuration seconds.
+- #### inmemoryBlockDuration
+    <code> Default: 0</code>
+    <code> Type: number</code>
+    <br>
+
+    For Redis, Memcached, MongoDB, MySQL, PostgreSQL, etc.
+
+    Block key for inmemoryBlockDuration seconds, if inmemoryBlockOnConsumed or more points are consumed. Set it the same as blockDuration option for distributed application to have consistent result on all processes.
+- #### queueEnabled
+    <code> Default: false</code>
+    <code> Type: boolean</code>
+    <br>
+
+    It activates the queue mechanism, and holds the incoming requests for <code>duration</code> value.
+- #### whiteList
+    <code> Default: []</code>
+    <code> Type: string[]</code>
+    <br>
+
+    If the IP is white listed, consume resolved no matter how many points consumed.
+- #### blackList
+    <code> Default: []</code>
+    <code> Type: string[]</code>
+    <br>
+
+    If the IP is black listed, consume rejected anytime. Blacklisted IPs are blocked on code level not in store/memory. Think of it as of requests filter.
+- #### storeClient
+    <code> Default: undefined</code>
+    <code> Type: any</code>
+    <br>
+
+    Required for Redis, Memcached, MongoDB, MySQL, PostgreSQL, etc
+    Have to be redis, ioredis, memcached, mongodb, pg, mysql2, mysql or any other related pool or connection.
+- #### insuranceLimiter
+    <code> Default: undefined</code>
+    <code> Type: any</code>
+    <br>
+
+    Default: undefined For Redis, Memcached, MongoDB, MySQL, PostgreSQL.
+
+    Instance of RateLimiterAbstract extended object to store limits, when database comes up with any error.
+
+    All data from insuranceLimiter is NOT copied to parent limiter, when error gone
+
+    Note: insuranceLimiter automatically setup blockDuration and execEvenly to same values as in parent to avoid unexpected behaviour
+- #### storeType
+    <code> Default: storeClient.constructor.name</code>
+    <code> Type: any</code>
+    <br>
+
+    For MySQL and PostgreSQL
+    It is required only for Knex and have to be set to 'knex'
+- #### dbName
+    <code> Default for MySQL, Postgres & Mongo: 'rate-limiter'</code>
+    <code> Type: string</code>
+    <br>
+
+    Database where limits are stored. It is created during creating a limiter. Doesn't work with Mongoose, as mongoose connection is established to exact database.
+
+- #### tableName
+    <code> Default: equals to 'keyPrefix' option</code>
+    <code> Type: string</code>
+    <br>
+
+    For MongoDB, MySQL, PostgreSQL.
+
+    By default, limiter creates a table for each unique keyPrefix. tableName option sets table/collection name where values should be stor
+- #### tableCreated
+    <code> Default: false</code>
+    <code> Type: boolean</code>
+    <br>
+
+    Does not create a table for rate limiter, if tableCreated is <code>true</code>.
+
+- #### clearExpiredByTimeout
+    <code> Default for MySQL and PostgreSQL: true</code>
+    <code> Type: boolean</code>
+    <br>
+
+    Rate limiter deletes data expired more than 1 hour ago every 5 minutes.
+- #### execEvenly
+    <code> Default: false</code>
+    <code> Type: boolean</code>
+    <br>
+
+    Delay action to be executed evenly over duration First action in duration is executed without delay. All next allowed actions in current duration are delayed by formula msBeforeDurationEnd / (remainingPoints + 2) with minimum delay of duration * 1000 / points It allows to cut off load peaks similar way to Leaky Bucket.
+
+    Note: it isn't recommended to use it for long duration and few points, as it may delay action for too long with default execEvenlyMinDelayMs.
+- #### execEvenlyMinDelayMs
+    <code> Default: duration * 1000 / points</code>
+    <code> Type: number</code>
+    <br>
+
+    Sets minimum delay in milliseconds, when action is delayed with execEvenly
+- #### indexKeyPrefix
+    <code> Default: {}</code>
+    <code> Type: {}</code>
+    <br>
+
+    Object which is used to create combined index by {...indexKeyPrefix, key: 1} attributes.
+- #### maxQueueSize
+    <code> Default: 100</code>
+    <code> Type: number</code>
+    <br>
+
+    Determines the maximum number of requests in the queue and returns <code>429</code> as response to requests that over of the maxQueueSize.
+- #### errorMessage
+    <code> Default: 'Rate limit exceeded'</code>
+    <code> Type: string</code>
+    <br>
+
+    errorMessage option can change the error message of rate limiter exception.
+
+# Benchmarks
+
+1000 concurrent clients with maximum 2000 requests per sec during 30 seconds.
+
+```
+1. Memory     0.34 ms
+2. Redis      2.45 ms
+3. Memcached  3.89 ms
+4. Mongo      4.75 ms
 ```
 
-The above example would rate limit the `/login` route to 1 request every 1 second using an im memory cache.
+500 concurrent clients with maximum 1000 req per sec during 30 seconds
 
-When defining your options, you can pass through any options supported by `rate-limiter-flexible` in order to setup any
-config needed. For a full list see <https://github.com/animir/node-rate-limiter-flexible/wiki/Options>.
-
-The main important options (and the ones used solely by this library) are below.
-
-### for: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
-
-This is the value which is based technology of your project. The default Nest applications are Express therefore this value is also comes with Express value as default.
-
-See official documentation for other supported technologies other than Express:
-
--   [Fastify](https://docs.nestjs.com/techniques/performance)
--   [Microservices](https://docs.nestjs.com/microservices/basics)
--   [Graphql](https://docs.nestjs.com/graphql/quick-start)
-
-### type: 'Memory' | 'Redis' | 'Memcached' | 'Postgres' | 'MySQL'
-
-This is the type of rate limiter that the underlying `rate-limiter-flexible` library will use to keep track of the
-requests made by users.
-
--   [Memory](https://github.com/animir/node-rate-limiter-flexible/wiki/Memory)
--   [Redis](https://github.com/animir/node-rate-limiter-flexible/wiki/Redis)
--   [Memcached](https://github.com/animir/node-rate-limiter-flexible/wiki/Memcached)
--   [Postgres](https://github.com/animir/node-rate-limiter-flexible/wiki/Postgres)
--   [MySQL](https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL)
-
-For examples showing how to define and setup different cache types, see the section in the README.
-
-There are other options that the `rate-limiter-flexible` library supports, but aren't implemented within this library
-yet. Feel free to submit a PR adding support for those.
-
-### points: number
-
-This is the number of 'points' the user will be given per period. You can think of points as simply the number of
-requests that a user can make in a set period.
-
-The underlying library allows consuming a set amount of points per action, for instance maybe some actions a user can
-take, might be more resource intensive, and therefor take up more 'points'.
-
-By default we assume all requests consume 1 point. But this can be set using the `pointsConsumed` configuration option
-or via the `@RateLimit` decorator.
-
-### pointsConsumed: number
-
-As mentioned above, you can consume more than 1 point per invocation of the rate limiter.
-
-For instance if you have a limit of 100 points per 60 seconds, and `pointsConsumed` is set to 10, the user will
-effectively be able to make 10 requests per 60 seconds.
-
-### duration: number
-
-This is the duration that the rate limiter will enforce the limit of `points` for.
-
-This is defined in seconds, so a value of 60 will be 60 seconds.
-
-### keyPrefix: string
-
-This defines the prefix used for all storage methods listed in the `type` option.
-
-This can be used to define different rate limiting rules to different routes/controllers.
-
-When setting up `nestjs-rate-limiter`, you should make sure that any `keyPrefix` values are unique. If they are not
-unique, then they will share the same rate limit.
-
-For instance if you have the decorator on a controller, the `keyPrefix` will be the controllers name. If used on a
-route, it will be a combination of the controllers name and the route functions name.
-
-
-### errorMessage: string
-
-The value that overrides error messages on Rate Limit exceptions.
-
-
-# Examples
-
-### With Redis
-
-First you must install either the `redis` or `ioredis` package:
-
-```bash
-npm install --save redis
 ```
-
-```bash
-npm install --save ioredis
+5. PostgreSQL 7.48 ms (with connection pool max 100)
+6. MySQL     14.59 ms (with connection pool 100)
 ```
-
-Then you must create a client (offline queue must be turned off) and pass it via the `storeClient` config option to
-`RateLimiterModule.register`:
-
-> app.module.ts
-
-```ts
-import * as redis from 'redis';
-const redisClient = redis.createClient({ enable_offline_queue: false });
-
-import * as Redis from 'ioredis';
-const redisClient = new Redis({ enableOfflineQueue: false });
-
-@Module({
-    imports: [
-        RateLimiterModule.register({
-            type: 'Redis',
-            storeClient: redisClient,
-        }),
-    ],
-    providers: [
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
-        },
-    ],
-})
-export class ApplicationModule {}
-```
-
-### With Memcache
-
-First you must install the `memcached` package:
-
-```bash
-npm install --save memcached
-```
-
-Then you must create a client and pass it via the `storeClient` config option to `RateLimiterModule.register`:
-
-> app.module.ts
-
-```ts
-import * as Memcached from 'memcached';
-const memcachedClient = new Memcached('127.0.0.1:11211');
-
-@Module({
-    imports: [
-        RateLimiterModule.register({
-            type: 'Memcached',
-            storeClient: memcachedClient,
-        }),
-    ],
-    providers: [
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
-        },
-    ],
-})
-export class ApplicationModule {}
-```
-
-### With Postgres
-
-First you must install the `pg` package:
-
-```bash
-npm install --save pg
-```
-
-Then you must create a client and pass it via the `storeClient` config option to `RateLimiterModule.register`:
-
-> app.module.ts
-
-```ts
-import { Pool } from 'pg';
-const postgresClient = new Pool({
-    host: '127.0.0.1',
-    port: 5432,
-    database: 'root',
-    user: 'root',
-    password: 'secret',
-});
-
-@Module({
-    imports: [
-        RateLimiterModule.register({
-            type: 'Postgres',
-            storeClient: postgresClient,
-            tableName: 'rate_limiting', // not specifying this will create one table for each keyPrefix
-        }),
-    ],
-    providers: [
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
-        },
-    ],
-})
-export class ApplicationModule {}
-```
-
-Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
-an additional parameter as noted at
-<https://github.com/animir/node-rate-limiter-flexible/wiki/PostgreSQL#sequelize-and-knex-support>.
-
-### With MySQL
-
-First you must install either the `mysql` or `mysql2` package:
-
-```bash
-npm install --save mysql
-```
-
-```bash
-npm install --save mysql2
-```
-
-Then you must create a client and pass it via the `storeClient` config option to `RateLimiterModule.register`:
-
-> app.module.ts
-
-```ts
-import * as mysql from 'mysql';
-
-import * as mysql from 'mysql2';
-
-const mysqlClient = mysql.createPool({
-    connectionLimit: 100,
-    host: 'localhost',
-    user: 'root',
-    password: 'secret',
-});
-
-@Module({
-    imports: [
-        RateLimiterModule.register({
-            type: 'MySQL',
-            storeClient: mysqlClient,
-            dbName: 'ratelimits',
-            tableName: 'rate_limiting', // not specifying this will create one table for each keyPrefix
-        }),
-    ],
-    providers: [
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
-        },
-    ],
-})
-export class ApplicationModule {}
-```
-
-Note that this limiter also supports using [knex](https://knexjs.org/) or [sequelize](http://docs.sequelizejs.com/) with
-an additional parameter as noted at
-<https://github.com/animir/node-rate-limiter-flexible/wiki/MySQL#sequelize-and-knex-support>.
 
 ## TODO
+- [ ] Create example projects for each technology
 - [ ] Support Websocket
 - [ ] Support Rpc
 - [ ] Tests & Github Actions (for automatic npm deployment on master branch)
