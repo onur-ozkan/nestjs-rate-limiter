@@ -10,6 +10,7 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	duration: 1,
 	blockDuration: 0,
 	inmemoryBlockDuration: 0,
+	queueEnabled: false,
 	whiteList: [],
 	blackList: [],
 	storeClient: undefined,

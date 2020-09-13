@@ -97,20 +97,17 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					rateLimiter = new RateLimiterMongo(libraryArguments as IRateLimiterStoreOptions)
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMongo')
 					break
-				case 'Queue':
-					rateLimiter = new RateLimiterMemory(libraryArguments)
-
-					this.queueLimiter = new RateLimiterQueue(rateLimiter, {
-						maxQueueSize: this.options.maxQueueSize
-					})
-
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterQueue')
-					break
 				default:
 					throw new Error(`Invalid "type" option provided to RateLimiterInterceptor. Value was ${limiterOptions.type}`)
 			}
 
 			this.rateLimiters.set(keyPrefix, rateLimiter)
+		}
+
+		if (this.options.queueEnabled) {
+			this.queueLimiter = new RateLimiterQueue(rateLimiter, {
+				maxQueueSize: this.options.maxQueueSize
+			})
 		}
 
 		rateLimiter = new RLWrapperBlackAndWhite({
@@ -182,7 +179,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number, next: CallHandler) {
 		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
 			try {
-				if (this.options.type === 'Queue') await this.queueLimiter.removeTokens(1)
+				if (this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
 				else {
 					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
@@ -202,7 +199,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			}
 		} else {
 			try {
-				if (this.options.type === 'Queue') await this.queueLimiter.removeTokens(1)
+				if (this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
 				else {
 					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
