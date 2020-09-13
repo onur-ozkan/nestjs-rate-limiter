@@ -22,10 +22,9 @@ export interface RateLimiterOptions {
 	tableCreated?: boolean
 	clearExpiredByTimeout?: boolean
 	execEvenly?: boolean
-	execEvenlyMinDelayMs?: any
-	indexKeyPrefix?: any
+	execEvenlyMinDelayMs?: number
+	indexKeyPrefix?: {}
 	maxQueueSize?: number
-	timeoutMs?: number
 	errorMessage?: string
 }
 
