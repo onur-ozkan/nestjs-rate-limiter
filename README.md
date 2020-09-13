@@ -200,6 +200,7 @@ GraphQLModule.forRoot({
 
 - #### for
     <code> Default: 'Express'</code>
+    <br>
     <code> Type: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'</code>
     <br>
 
@@ -207,12 +208,14 @@ GraphQLModule.forRoot({
 
 - #### type
     <code> Default: 'Memory'</code>
+    <br>
     <code> Type: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo'</code>
     <br>
 
     Here you define where the limiter data will be stored. Each option plays a different role in limiter performance, to see that please check [benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks).
 - #### keyPrefix
     <code> Default: 'global'</code>
+    <br>
     <code> Type: string</code>
     <br>
 
@@ -223,12 +226,14 @@ GraphQLModule.forRoot({
     Note: for some limiters it should correspond to Storage requirements for tables or collections name, as keyPrefix may be used as their name.
 - #### points
     <code> Default: 4</code>
+    <br>
     <code> Type: number</code>
     <br>
 
     Maximum number of points can be consumed over duration
 - #### pointsConsumed
     <code> Default: 1</code>
+    <br>
     <code> Type: number</code>
     <br>
 
@@ -237,6 +242,7 @@ GraphQLModule.forRoot({
     For instance if you have a limit of 100 points per 60 seconds, and pointsConsumed is set to 10, the user will effectively be able to make 10 requests per 60 seconds.
 - #### inmemoryBlockOnConsumed
     <code> Default: 0</code>
+    <br>
     <code> Type: number</code>
     <br>
 
@@ -247,6 +253,7 @@ GraphQLModule.forRoot({
     It blocks a key in memory for msBeforeNext milliseconds from the last consume result, if inmemoryBlockDuration is not set. This helps to avoid extra requests. It is not necessary to increment counter on store, if all points are consumed already.
 - #### duration
     <code> Default: 1</code>
+    <br>
     <code> Type: number</code>
     <br>
 
@@ -255,12 +262,14 @@ GraphQLModule.forRoot({
     Keys never expire, if duration is 0.
 - #### blockDuration
     <code> Default: 0</code>
+    <br>
     <code> Type: number</code>
     <br>
 
     If positive number and consumed more than points in current duration, block for blockDuration seconds.
 - #### inmemoryBlockDuration
     <code> Default: 0</code>
+    <br>
     <code> Type: number</code>
     <br>
 
@@ -269,24 +278,28 @@ GraphQLModule.forRoot({
     Block key for inmemoryBlockDuration seconds, if inmemoryBlockOnConsumed or more points are consumed. Set it the same as blockDuration option for distributed application to have consistent result on all processes.
 - #### queueEnabled
     <code> Default: false</code>
+    <br>
     <code> Type: boolean</code>
     <br>
 
     It activates the queue mechanism, and holds the incoming requests for <code>duration</code> value.
 - #### whiteList
     <code> Default: []</code>
+    <br>
     <code> Type: string[]</code>
     <br>
 
     If the IP is white listed, consume resolved no matter how many points consumed.
 - #### blackList
     <code> Default: []</code>
+    <br>
     <code> Type: string[]</code>
     <br>
 
     If the IP is black listed, consume rejected anytime. Blacklisted IPs are blocked on code level not in store/memory. Think of it as of requests filter.
 - #### storeClient
     <code> Default: undefined</code>
+    <br>
     <code> Type: any</code>
     <br>
 
@@ -294,6 +307,7 @@ GraphQLModule.forRoot({
     Have to be redis, ioredis, memcached, mongodb, pg, mysql2, mysql or any other related pool or connection.
 - #### insuranceLimiter
     <code> Default: undefined</code>
+    <br>
     <code> Type: any</code>
     <br>
 
@@ -306,6 +320,7 @@ GraphQLModule.forRoot({
     Note: insuranceLimiter automatically setup blockDuration and execEvenly to same values as in parent to avoid unexpected behaviour
 - #### storeType
     <code> Default: storeClient.constructor.name</code>
+    <br>
     <code> Type: any</code>
     <br>
 
@@ -313,6 +328,7 @@ GraphQLModule.forRoot({
     It is required only for Knex and have to be set to 'knex'
 - #### dbName
     <code> Default for MySQL, Postgres & Mongo: 'rate-limiter'</code>
+    <br>
     <code> Type: string</code>
     <br>
 
@@ -320,6 +336,7 @@ GraphQLModule.forRoot({
 
 - #### tableName
     <code> Default: equals to 'keyPrefix' option</code>
+    <br>
     <code> Type: string</code>
     <br>
 
@@ -328,6 +345,7 @@ GraphQLModule.forRoot({
     By default, limiter creates a table for each unique keyPrefix. tableName option sets table/collection name where values should be stor
 - #### tableCreated
     <code> Default: false</code>
+    <br>
     <code> Type: boolean</code>
     <br>
 
@@ -335,12 +353,14 @@ GraphQLModule.forRoot({
 
 - #### clearExpiredByTimeout
     <code> Default for MySQL and PostgreSQL: true</code>
+    <br>
     <code> Type: boolean</code>
     <br>
 
     Rate limiter deletes data expired more than 1 hour ago every 5 minutes.
 - #### execEvenly
     <code> Default: false</code>
+    <br>
     <code> Type: boolean</code>
     <br>
 
@@ -349,24 +369,28 @@ GraphQLModule.forRoot({
     Note: it isn't recommended to use it for long duration and few points, as it may delay action for too long with default execEvenlyMinDelayMs.
 - #### execEvenlyMinDelayMs
     <code> Default: duration * 1000 / points</code>
+    <br>
     <code> Type: number</code>
     <br>
 
     Sets minimum delay in milliseconds, when action is delayed with execEvenly
 - #### indexKeyPrefix
     <code> Default: {}</code>
+    <br>
     <code> Type: {}</code>
     <br>
 
     Object which is used to create combined index by {...indexKeyPrefix, key: 1} attributes.
 - #### maxQueueSize
     <code> Default: 100</code>
+    <br>
     <code> Type: number</code>
     <br>
 
     Determines the maximum number of requests in the queue and returns <code>429</code> as response to requests that over of the maxQueueSize.
 - #### errorMessage
     <code> Default: 'Rate limit exceeded'</code>
+    <br>
     <code> Type: string</code>
     <br>
 
