@@ -196,7 +196,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-# Options
+# Options
 
 - #### for
     <code> Default: 'Express'</code>
