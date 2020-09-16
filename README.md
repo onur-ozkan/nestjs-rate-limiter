@@ -304,6 +304,7 @@ GraphQLModule.forRoot({
     <br>
 
     Required for Redis, Memcached, MongoDB, MySQL, PostgreSQL, etc.
+    
     Have to be redis, ioredis, memcached, mongodb, pg, mysql2, mysql or any other related pool or connection.
 - #### insuranceLimiter
     <code> Default: undefined</code>
