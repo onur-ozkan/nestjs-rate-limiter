@@ -16,7 +16,7 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	storeClient: undefined,
 	insuranceLimiter: undefined,
 	storeType: undefined,
-	dbName: undefined,
+	dbName: 'rate-limiter',
 	tableName: undefined,
 	tableCreated: undefined,
 	clearExpiredByTimeout: undefined,
