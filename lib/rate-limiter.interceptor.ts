@@ -15,7 +15,9 @@ import {
 } from 'rate-limiter-flexible'
 import { RateLimiterOptions } from './rate-limiter.interface'
 import { defaultRateLimiterOptions } from './default-options'
+import * as env from 'dotenv'
 
+env.config()
 @Injectable()
 export class RateLimiterInterceptor implements NestInterceptor {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
@@ -121,6 +123,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	}
 
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
+		if (process.env.RATE_LIMITER === '0') return next.handle()
+
 		let points: number = this.options.points
 		let pointsConsumed: number = this.options.pointsConsumed
 		let keyPrefix: string = this.options.keyPrefix
@@ -153,8 +157,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(keyPrefix, reflectedOptions)
 		const key = request.ip.replace(/^.*:/, '')
 
-		const process = await this.responseHandler(response, key, rateLimiter, points, pointsConsumed, next)
-		return process
+		const operation = await this.responseHandler(response, key, rateLimiter, points, pointsConsumed, next)
+		return operation
 	}
 
 	private httpHandler(context: ExecutionContext) {
