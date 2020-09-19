@@ -21,15 +21,16 @@ env.config()
 @Injectable()
 export class RateLimiterInterceptor implements NestInterceptor {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
+	private spesificOptions: RateLimiterOptions
 	private queueLimiter: RateLimiterQueue
 
-	constructor(@Inject('RATE_LIMITER_OPTIONS') private options: RateLimiterOptions, @Inject('Reflector') private readonly reflector: Reflector) {
-		this.options = { ...defaultRateLimiterOptions, ...this.options }
-		this.options.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
-	}
+	constructor(@Inject('RATE_LIMITER_OPTIONS') private options: RateLimiterOptions, @Inject('Reflector') private readonly reflector: Reflector) {}
 
 	async getRateLimiter(keyPrefix: string, options?: RateLimiterOptions): Promise<RateLimiterAbstract> {
-		this.options = { ...this.options, ...options }
+		this.options = { ...defaultRateLimiterOptions, ...this.options }
+
+		this.spesificOptions = null
+		this.spesificOptions = options
 
 		let rateLimiter: RateLimiterAbstract = this.rateLimiters.get(keyPrefix)
 
@@ -40,9 +41,10 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		}
 
 		const { ...libraryArguments } = limiterOptions
+		if (libraryArguments.execEvenlyMinDelayMs === undefined) libraryArguments.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
 
 		if (!rateLimiter) {
-			switch (this.options.type) {
+			switch (this.spesificOptions?.type || this.options.type) {
 				case 'Memory':
 					rateLimiter = new RateLimiterMemory(libraryArguments)
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMemory')
@@ -56,11 +58,15 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMemcache')
 					break
 				case 'Postgres':
-					if (this.options.storeType === undefined) this.options.storeType = this.options.storeClient.constructor.name
-					if (this.options.dbName === undefined) this.options.dbName = 'rate-limiter'
-					if (this.options.tableName === undefined) this.options.tableName = this.options.keyPrefix
-					if (this.options.tableCreated === undefined) this.options.tableCreated = false
-					if (this.options.clearExpiredByTimeout === undefined) this.options.clearExpiredByTimeout = true
+					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
+
+					libraryArguments.tableName = this.spesificOptions?.tableName || this.options.tableName
+					if (libraryArguments.tableName === undefined) {
+						libraryArguments.tableName = this.spesificOptions?.keyPrefix || this.options.keyPrefix
+					}
+
+					if (libraryArguments.tableCreated === undefined) libraryArguments.tableCreated = false
+					if (libraryArguments.clearExpiredByTimeout === undefined) libraryArguments.clearExpiredByTimeout = true
 
 					rateLimiter = await new Promise((resolve, reject) => {
 						const limiter = new RateLimiterPostgres(libraryArguments as IRateLimiterStoreOptions, (err) => {
@@ -74,11 +80,15 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterPostgres')
 					break
 				case 'MySQL':
-					if (this.options.storeType === undefined) this.options.storeType = this.options.storeClient.constructor.name
-					if (this.options.dbName === undefined) this.options.dbName = 'rate-limiter'
-					if (this.options.tableName === undefined) this.options.tableName = this.options.keyPrefix
-					if (this.options.tableCreated === undefined) this.options.tableCreated = false
-					if (this.options.clearExpiredByTimeout === undefined) this.options.clearExpiredByTimeout = true
+					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
+
+					libraryArguments.tableName = this.spesificOptions?.tableName || this.options.tableName
+					if (libraryArguments.tableName === undefined) {
+						libraryArguments.tableName = this.spesificOptions?.keyPrefix || this.options.keyPrefix
+					}
+
+					if (libraryArguments.tableCreated === undefined) libraryArguments.tableCreated = false
+					if (libraryArguments.clearExpiredByTimeout === undefined) libraryArguments.clearExpiredByTimeout = true
 
 					rateLimiter = await new Promise((resolve, reject) => {
 						const limiter = new RateLimiterMySQL(libraryArguments as IRateLimiterStoreOptions, (err) => {
@@ -92,9 +102,12 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMySQL')
 					break
 				case 'Mongo':
-					if (this.options.storeType === undefined) this.options.storeType = this.options.storeClient.constructor.name
-					if (this.options.dbName === undefined) this.options.dbName = 'rate-limiter'
-					if (this.options.tableName === undefined) this.options.tableName = this.options.keyPrefix
+					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
+
+					libraryArguments.tableName = this.spesificOptions?.tableName || this.options.tableName
+					if (libraryArguments.tableName === undefined) {
+						libraryArguments.tableName = this.spesificOptions?.keyPrefix || this.options.keyPrefix
+					}
 
 					rateLimiter = new RateLimiterMongo(libraryArguments as IRateLimiterStoreOptions)
 					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMongo')
@@ -106,16 +119,16 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			this.rateLimiters.set(keyPrefix, rateLimiter)
 		}
 
-		if (this.options.queueEnabled) {
+		if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) {
 			this.queueLimiter = new RateLimiterQueue(rateLimiter, {
-				maxQueueSize: this.options.maxQueueSize
+				maxQueueSize: this.spesificOptions?.maxQueueSize || this.options.maxQueueSize
 			})
 		}
 
 		rateLimiter = new RLWrapperBlackAndWhite({
 			limiter: rateLimiter,
-			whiteList: this.options.whiteList,
-			blackList: this.options.blackList,
+			whiteList: this.spesificOptions?.whiteList || this.options.whiteList,
+			blackList: this.spesificOptions?.blackList || this.options.blackList,
 			runActionAnyway: false
 		})
 
@@ -125,9 +138,9 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
 		if (process.env.RATE_LIMITER === '0') return next.handle()
 
-		let points: number = this.options.points
-		let pointsConsumed: number = this.options.pointsConsumed
-		let keyPrefix: string = this.options.keyPrefix
+		let points: number = this.spesificOptions?.points || this.options.points
+		let pointsConsumed: number = this.spesificOptions?.pointsConsumed || this.options.pointsConsumed
+		let keyPrefix: string = this.spesificOptions?.keyPrefix || this.options.keyPrefix
 
 		const reflectedOptions: RateLimiterOptions = this.reflector.get<RateLimiterOptions>('rateLimit', context.getHandler())
 
@@ -183,7 +196,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number, next: CallHandler) {
 		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
 			try {
-				if (this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
+				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
 				else {
 					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
@@ -198,12 +211,12 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.code(429).header('Content-Type', 'application/json; charset=utf-8').send({
 					statusCode: HttpStatus.TOO_MANY_REQUESTS,
 					error: 'Too Many Requests',
-					message: this.options.errorMessage
+					message: this.spesificOptions?.errorMessage || this.options.errorMessage
 				})
 			}
 		} else {
 			try {
-				if (this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
+				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
 				else {
 					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
@@ -218,7 +231,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 				response.status(429).json({
 					statusCode: HttpStatus.TOO_MANY_REQUESTS,
 					error: 'Too Many Requests',
-					message: this.options.errorMessage
+					message: this.spesificOptions?.errorMessage || this.options.errorMessage
 				})
 			}
 		}
