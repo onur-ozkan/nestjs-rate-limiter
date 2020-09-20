@@ -196,10 +196,6 @@ GraphQLModule.forRoot({
 }),
 ```
 
-### Disable Rate Limiter globally
-
-Setting RATE_LIMITER = 0 as the environment variable disables the Rate ​​Limiter globally for situations such as testing.
-
 # Options
 
 #### for
