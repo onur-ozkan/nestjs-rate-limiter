@@ -33,7 +33,6 @@
     "lint": "prettier --write lib"
   },
   "dependencies": {
-    "dotenv": "^8.2.0",
     "rate-limiter-flexible": "2.1.10"
   },
   "devDependencies": {

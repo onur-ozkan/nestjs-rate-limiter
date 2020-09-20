@@ -15,9 +15,7 @@ import {
 } from 'rate-limiter-flexible'
 import { RateLimiterOptions } from './rate-limiter.interface'
 import { defaultRateLimiterOptions } from './default-options'
-import * as env from 'dotenv'
 
-env.config()
 @Injectable()
 export class RateLimiterInterceptor implements NestInterceptor {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
@@ -26,36 +24,36 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
 	constructor(@Inject('RATE_LIMITER_OPTIONS') private options: RateLimiterOptions, @Inject('Reflector') private readonly reflector: Reflector) {}
 
-	async getRateLimiter(keyPrefix: string, options?: RateLimiterOptions): Promise<RateLimiterAbstract> {
+	async getRateLimiter(options?: RateLimiterOptions): Promise<RateLimiterAbstract> {
 		this.options = { ...defaultRateLimiterOptions, ...this.options }
-
 		this.spesificOptions = null
 		this.spesificOptions = options
 
-		let rateLimiter: RateLimiterAbstract = this.rateLimiters.get(keyPrefix)
 
 		const limiterOptions: RateLimiterOptions = {
 			...this.options,
-			...options,
-			keyPrefix
+			...options
 		}
 
 		const { ...libraryArguments } = limiterOptions
+
+		let rateLimiter: RateLimiterAbstract = this.rateLimiters.get(libraryArguments.keyPrefix)
+
 		if (libraryArguments.execEvenlyMinDelayMs === undefined) libraryArguments.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
 
 		if (!rateLimiter) {
 			switch (this.spesificOptions?.type || this.options.type) {
 				case 'Memory':
 					rateLimiter = new RateLimiterMemory(libraryArguments)
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMemory')
+					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterMemory')
 					break
 				case 'Redis':
 					rateLimiter = new RateLimiterRedis(libraryArguments as IRateLimiterStoreOptions)
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterRedis')
+					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterRedis')
 					break
 				case 'Memcache':
 					rateLimiter = new RateLimiterMemcache(libraryArguments as IRateLimiterStoreOptions)
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMemcache')
+					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterMemcache')
 					break
 				case 'Postgres':
 					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
@@ -77,7 +75,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 							}
 						})
 					})
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterPostgres')
+					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterPostgres')
 					break
 				case 'MySQL':
 					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
@@ -99,7 +97,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 							}
 						})
 					})
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMySQL')
+					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterMySQL')
 					break
 				case 'Mongo':
 					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
@@ -110,13 +108,13 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					}
 
 					rateLimiter = new RateLimiterMongo(libraryArguments as IRateLimiterStoreOptions)
-					Logger.log(`Rate Limiter started with ${keyPrefix} key prefix`, 'RateLimiterMongo')
+					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterMongo')
 					break
 				default:
 					throw new Error(`Invalid "type" option provided to RateLimiterInterceptor. Value was ${limiterOptions.type}`)
 			}
 
-			this.rateLimiters.set(keyPrefix, rateLimiter)
+			this.rateLimiters.set(limiterOptions.keyPrefix, rateLimiter)
 		}
 
 		if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) {
@@ -136,11 +134,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	}
 
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
-		if (process.env.RATE_LIMITER === '0') return next.handle()
-
 		let points: number = this.spesificOptions?.points || this.options.points
 		let pointsConsumed: number = this.spesificOptions?.pointsConsumed || this.options.pointsConsumed
-		let keyPrefix: string = this.spesificOptions?.keyPrefix || this.options.keyPrefix
 
 		const reflectedOptions: RateLimiterOptions = this.reflector.get<RateLimiterOptions>('rateLimit', context.getHandler())
 
@@ -152,22 +147,12 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			if (reflectedOptions.pointsConsumed) {
 				pointsConsumed = reflectedOptions.pointsConsumed
 			}
-
-			if (reflectedOptions.keyPrefix) {
-				keyPrefix = reflectedOptions.keyPrefix
-			} else {
-				keyPrefix = context.getClass().name
-
-				if (context.getHandler()) {
-					keyPrefix += `-${context.getHandler().name}`
-				}
-			}
 		}
 
 		const request = this.httpHandler(context).req
 		const response = this.httpHandler(context).res
 
-		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(keyPrefix, reflectedOptions)
+		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
 		const key = request.ip.replace(/^.*:/, '')
 
 		const operation = await this.responseHandler(response, key, rateLimiter, points, pointsConsumed, next)
