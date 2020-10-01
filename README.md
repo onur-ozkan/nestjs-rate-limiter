@@ -22,7 +22,7 @@
   - [With All Options](https://github.com/ozkanonur/nestjs-rate-limiter#with-all-options)
   - [Fastify based Graphql](https://github.com/ozkanonur/nestjs-rate-limiter#fastify-based-graphql)
 - [Options](https://github.com/ozkanonur/nestjs-rate-limiter#options)
-  - [for](https://github.com/ozkanonur/nestjs-rate-limiter#for)
+  - [for](https://github.com/ozkanonur/nestjs-rate-limiter#●for)
   - [type](https://github.com/ozkanonur/nestjs-rate-limiter#type)
   - [keyPrefix](https://github.com/ozkanonur/nestjs-rate-limiter#keyPrefix)
   - [points](https://github.com/ozkanonur/nestjs-rate-limiter#points)
