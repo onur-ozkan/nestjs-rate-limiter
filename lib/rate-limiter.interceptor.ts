@@ -29,7 +29,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		this.spesificOptions = null
 		this.spesificOptions = options
 
-
 		const limiterOptions: RateLimiterOptions = {
 			...this.options,
 			...options
@@ -39,7 +38,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 
 		let rateLimiter: RateLimiterAbstract = this.rateLimiters.get(libraryArguments.keyPrefix)
 
-		if (libraryArguments.execEvenlyMinDelayMs === undefined) libraryArguments.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
+		if (libraryArguments.execEvenlyMinDelayMs === undefined)
+			libraryArguments.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
 
 		if (!rateLimiter) {
 			switch (this.spesificOptions?.type || this.options.type) {
@@ -56,7 +56,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterMemcache')
 					break
 				case 'Postgres':
-					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
+					if (libraryArguments.storeType === undefined) libraryArguments.storeType = this.options.storeClient.constructor.name
 
 					libraryArguments.tableName = this.spesificOptions?.tableName || this.options.tableName
 					if (libraryArguments.tableName === undefined) {
@@ -78,7 +78,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterPostgres')
 					break
 				case 'MySQL':
-					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
+					if (libraryArguments.storeType === undefined) libraryArguments.storeType = this.options.storeClient.constructor.name
 
 					libraryArguments.tableName = this.spesificOptions?.tableName || this.options.tableName
 					if (libraryArguments.tableName === undefined) {
@@ -100,7 +100,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					Logger.log(`Rate Limiter started with ${limiterOptions.keyPrefix} key prefix`, 'RateLimiterMySQL')
 					break
 				case 'Mongo':
-					if (libraryArguments.storeType === undefined) libraryArguments.storeType =  this.options.storeClient.constructor.name
+					if (libraryArguments.storeType === undefined) libraryArguments.storeType = this.options.storeClient.constructor.name
 
 					libraryArguments.tableName = this.spesificOptions?.tableName || this.options.tableName
 					if (libraryArguments.tableName === undefined) {
@@ -190,15 +190,18 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 					response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 				}
-				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				response.code(429).header('Content-Type', 'application/json; charset=utf-8').send({
-					statusCode: HttpStatus.TOO_MANY_REQUESTS,
-					error: 'Too Many Requests',
-					message: this.spesificOptions?.errorMessage || this.options.errorMessage
-				})
+				response
+					.code(429)
+					.header('Content-Type', 'application/json; charset=utf-8')
+					.send({
+						statusCode: HttpStatus.TOO_MANY_REQUESTS,
+						error: 'Too Many Requests',
+						message: this.spesificOptions?.errorMessage || this.options.errorMessage
+					})
 			}
+			return next.handle()
 		} else {
 			try {
 				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
@@ -210,7 +213,6 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 					response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 				}
-				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.status(429).json({
@@ -219,6 +221,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					message: this.spesificOptions?.errorMessage || this.options.errorMessage
 				})
 			}
+			return next.handle()
 		}
 	}
 }
