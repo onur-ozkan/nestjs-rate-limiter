@@ -190,6 +190,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 					response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 				}
+				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response
@@ -200,8 +201,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 						error: 'Too Many Requests',
 						message: this.spesificOptions?.errorMessage || this.options.errorMessage
 					})
+				return []
 			}
-			return next.handle()
 		} else {
 			try {
 				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
@@ -213,6 +214,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 					response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 				}
+				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 				response.status(429).json({
@@ -220,8 +222,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					error: 'Too Many Requests',
 					message: this.spesificOptions?.errorMessage || this.options.errorMessage
 				})
+				return []
 			}
-			return next.handle()
 		}
 	}
 }
