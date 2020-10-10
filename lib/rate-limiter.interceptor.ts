@@ -1,5 +1,5 @@
 import { Reflector } from '@nestjs/core'
-import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus, Logger } from '@nestjs/common'
+import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus, Logger, HttpException } from '@nestjs/common'
 import {
 	RateLimiterMemory,
 	RateLimiterRes,
@@ -155,8 +155,8 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
 		const key = request.ip.replace(/^.*:/, '')
 
-		const operation = await this.responseHandler(response, key, rateLimiter, points, pointsConsumed, next)
-		return operation
+		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
+		return next.handle()
 	}
 
 	private httpHandler(context: ExecutionContext) {
@@ -178,7 +178,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		}
 	}
 
-	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number, next: CallHandler) {
+	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number) {
 		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
 			try {
 				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
@@ -190,18 +190,9 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 					response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 				}
-				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				response
-					.code(429)
-					.header('Content-Type', 'application/json; charset=utf-8')
-					.send({
-						statusCode: HttpStatus.TOO_MANY_REQUESTS,
-						error: 'Too Many Requests',
-						message: this.spesificOptions?.errorMessage || this.options.errorMessage
-					})
-				return []
+				throw new HttpException(this.spesificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS)
 			}
 		} else {
 			try {
@@ -214,15 +205,9 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
 					response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 				}
-				return next.handle()
 			} catch (rateLimiterResponse) {
 				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				response.status(429).json({
-					statusCode: HttpStatus.TOO_MANY_REQUESTS,
-					error: 'Too Many Requests',
-					message: this.spesificOptions?.errorMessage || this.options.errorMessage
-				})
-				return []
+				throw new HttpException(this.spesificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS)
 			}
 		}
 	}
