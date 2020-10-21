@@ -24,5 +24,8 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	execEvenlyMinDelayMs: undefined,
 	indexKeyPrefix: {},
 	maxQueueSize: 100,
-	errorMessage: 'Rate limit exceeded'
+	errorMessage: 'Rate limit exceeded',
+	generateKey: (req) => {
+		return req.ip.replace(/^.*:/, '')
+	}
 }

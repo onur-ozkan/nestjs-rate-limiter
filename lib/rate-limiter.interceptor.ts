@@ -136,6 +136,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
 		let points: number = this.spesificOptions?.points || this.options.points
 		let pointsConsumed: number = this.spesificOptions?.pointsConsumed || this.options.pointsConsumed
+		let generateKey: (req) => string =  this.spesificOptions?.generateKey || this.options.generateKey
 
 		const reflectedOptions: RateLimiterOptions = this.reflector.get<RateLimiterOptions>('rateLimit', context.getHandler())
 
@@ -147,13 +148,17 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			if (reflectedOptions.pointsConsumed) {
 				pointsConsumed = reflectedOptions.pointsConsumed
 			}
+
+			if (reflectedOptions.generateKey) {
+				generateKey = reflectedOptions.generateKey
+			}
 		}
 
 		const request = this.httpHandler(context).req
 		const response = this.httpHandler(context).res
 
 		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
-		const key = request.ip.replace(/^.*:/, '')
+		const key = generateKey(request)
 
 		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
 		return next.handle()

@@ -26,6 +26,7 @@ export interface RateLimiterOptions {
 	indexKeyPrefix?: {}
 	maxQueueSize?: number
 	errorMessage?: string
+	generateKey?: (req) => string
 }
 
 export interface RateLimiterOptionsFactory {
