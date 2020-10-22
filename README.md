@@ -46,6 +46,7 @@
   - [indexKeyPrefix](https://github.com/ozkanonur/nestjs-rate-limiter#-indexKeyPrefix)
   - [maxQueueSize](https://github.com/ozkanonur/nestjs-rate-limiter#-maxQueueSize)
   - [errorMessage](https://github.com/ozkanonur/nestjs-rate-limiter#-errorMessage)
+  - [generateKey](https://github.com/ozkanonur/nestjs-rate-limiter#-generateKey)
 - [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
 - [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
 
@@ -141,6 +142,22 @@ public async signUp() {
 }
 ```
 
+```ts
+import { RateLimit } from 'nestjs-rate-limiter';
+
+@RateLimit({ 
+  points: 1, 
+  duration: 60, 
+  generateKey: (request) => {
+    return req.user._id
+  }
+})
+@Get('/signup')
+public async signUp() {
+    console.log('hello');
+}
+```
+
 ### With All Options
 
 The usage of the limiter options is as in the code block below. For an explanation of the each option, please see <code>[options](https://github.com/ozkanonur/nestjs-rate-limiter#options)</code>.
@@ -173,7 +190,10 @@ The usage of the limiter options is as in the code block below. For an explanati
             execEvenlyMinDelayMs: undefined,
             indexKeyPrefix: {},
             maxQueueSize: 100,
-            errorMessage: 'Rate limit exceeded'
+            errorMessage: 'Rate limit exceeded',
+            generateKey: (req) => {
+              return req.ip.replace(/^.*:/, '')
+            }
         }),
     ],
     providers: [
@@ -417,6 +437,16 @@ GraphQLModule.forRoot({
   <br>
 
   errorMessage option can change the error message of rate limiter exception.
+
+#### ● generateKey
+  <code> 
+  Default: (request) => {return request.ip.replace(/^.*:/, '')}
+  </code>
+  <br>
+  <code> Type: (request) => string </code>
+  <br>
+
+  function used to generate keys
 
 # Benchmarks
 
