@@ -418,6 +418,14 @@ GraphQLModule.forRoot({
 
   errorMessage option can change the error message of rate limiter exception.
 
+#### ● limiterKey
+  <code> Default: Client's Ip Address </code>
+  <br>
+  <code> Type: string</code>
+  <br>
+
+  limiterKey option allows you to control scenarios such as applying rate limiter based on User Account instead of Ip Address
+
 # Benchmarks
 
 1000 concurrent clients with maximum 2000 requests per sec during 30 seconds.
