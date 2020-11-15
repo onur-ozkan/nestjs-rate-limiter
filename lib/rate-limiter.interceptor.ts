@@ -136,6 +136,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
 		let points: number = this.spesificOptions?.points || this.options.points
 		let pointsConsumed: number = this.spesificOptions?.pointsConsumed || this.options.pointsConsumed
+		let keyPrefix: string = this.spesificOptions?.keyPrefix || this.options.keyPrefix
 
 		const reflectedOptions: RateLimiterOptions = this.reflector.get<RateLimiterOptions>('rateLimit', context.getHandler())
 
@@ -147,13 +148,23 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			if (reflectedOptions.pointsConsumed) {
 				pointsConsumed = reflectedOptions.pointsConsumed
 			}
+
+			if (reflectedOptions.keyPrefix) {
+				keyPrefix = reflectedOptions.keyPrefix
+			} else {
+				keyPrefix = context.getClass().name
+
+				if (context.getHandler()) {
+					keyPrefix += `-${context.getHandler().name}`
+				}
+			}
 		}
 
 		const request = this.httpHandler(context).req
 		const response = this.httpHandler(context).res
 
 		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
-		const key = this.options.limiterKey || request.ip.replace(/^.*:/, '')
+		const key = this.spesificOptions.limiterKey || request.ip.replace(/^.*:/, '')
 
 		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
 		return next.handle()
@@ -179,7 +190,12 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	}
 
 	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number) {
-		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
+		if (
+			this.spesificOptions?.for === 'Fastify' ||
+			this.options.for === 'Fastify' ||
+			this.spesificOptions?.for === 'FastifyGraphql' ||
+			this.options.for === 'FastifyGraphql'
+		) {
 			try {
 				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
 				else {
