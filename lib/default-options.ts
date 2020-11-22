@@ -24,6 +24,5 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	execEvenlyMinDelayMs: undefined,
 	indexKeyPrefix: {},
 	maxQueueSize: 100,
-	errorMessage: 'Rate limit exceeded',
-	limiterKey: undefined
+	errorMessage: 'Rate limit exceeded'
 }
