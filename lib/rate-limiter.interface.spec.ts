@@ -33,21 +33,21 @@ describe('RateLimiterOptions', () => {
 		const rateLimiterOptions: RateLimiterOptions = {}
 		expect(rateLimiterOptions).toBeDefined()
 		expect(rateLimiterOptions.for).toBeUndefined()
-    })
-    
-    it('should validate that RateLimiterOptions with no properties', async () => {
+	})
+
+	it('should validate that RateLimiterOptions with no properties', async () => {
 		const rateLimiterOptions: RateLimiterOptions = {
-            for: 'Express',
-            type: 'Memory',
-            points: 2,
-            pointsConsumed: 3,
-            dbName: 'test'
-        }
+			for: 'Express',
+			type: 'Memory',
+			points: 2,
+			pointsConsumed: 3,
+			dbName: 'test'
+		}
 		expect(rateLimiterOptions).toBeDefined()
-        expect(rateLimiterOptions.for).toBe('Express')
-        expect(rateLimiterOptions.type).toBe('Memory')
-        expect(rateLimiterOptions.points).toBe(2)
-        expect(rateLimiterOptions.pointsConsumed).toBe(3)
-        expect(rateLimiterOptions.dbName).toBe('test')
+		expect(rateLimiterOptions.for).toBe('Express')
+		expect(rateLimiterOptions.type).toBe('Memory')
+		expect(rateLimiterOptions.points).toBe(2)
+		expect(rateLimiterOptions.pointsConsumed).toBe(3)
+		expect(rateLimiterOptions.dbName).toBe('test')
 	})
 })
