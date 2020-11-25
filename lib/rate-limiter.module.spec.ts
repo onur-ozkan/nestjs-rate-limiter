@@ -15,9 +15,9 @@ describe('RateLimiterModule', () => {
 		expect(registeredDynamicModule).toBeDefined()
 		expect(typeof registeredDynamicModule.module).toBeDefined()
 		expect(registeredDynamicModule.providers.length).toBe(1)
-		const rateLimitOptionsProvider: Provider<any> = registeredDynamicModule.providers[0]
-		expect(rateLimitOptionsProvider['provide']).toBe('RATE_LIMITER_OPTIONS')
-		expect(rateLimitOptionsProvider['useValue']).toBeDefined()
+		const rateLimitOptionsProvider: any = registeredDynamicModule.providers[0]
+		expect(rateLimitOptionsProvider.provide).toBe('RATE_LIMITER_OPTIONS')
+		expect(rateLimitOptionsProvider.useValue).toBeDefined()
 	})
 
 	it('should register RateLimiterModule with default options', async () => {
@@ -28,9 +28,9 @@ describe('RateLimiterModule', () => {
 		expect(registeredDynamicModule).toBeDefined()
 		expect(typeof registeredDynamicModule.module).toBeDefined()
 		expect(registeredDynamicModule.providers.length).toBe(1)
-		const rateLimitOptionsProvider: Provider<any> = registeredDynamicModule.providers[0]
-		expect(rateLimitOptionsProvider['provide']).toBe('RATE_LIMITER_OPTIONS')
-		expect(rateLimitOptionsProvider['useValue']).toBeDefined()
+		const rateLimitOptionsProvider: any = registeredDynamicModule.providers[0]
+		expect(rateLimitOptionsProvider.provide).toBe('RATE_LIMITER_OPTIONS')
+		expect(rateLimitOptionsProvider.useValue).toBeDefined()
 
 		const options: RateLimiterOptions = rateLimitOptionsProvider['useValue']
 
@@ -45,9 +45,9 @@ describe('RateLimiterModule', () => {
 		expect(registeredDynamicModule).toBeDefined()
 		expect(typeof registeredDynamicModule.module).toBeDefined()
 		expect(registeredDynamicModule.providers.length).toBe(2)
-		const rateLimitOptionsProvider: Provider<any> = registeredDynamicModule.providers[0]
-		expect(rateLimitOptionsProvider['provide']).toBe('RATE_LIMITER_OPTIONS')
-		expect(rateLimitOptionsProvider['useFactory']).toBeDefined()
-		expect(rateLimitOptionsProvider['inject']).toBeDefined()
+		const rateLimitOptionsProvider: any = registeredDynamicModule.providers[0]
+		expect(rateLimitOptionsProvider.provide).toBe('RATE_LIMITER_OPTIONS')
+		expect(rateLimitOptionsProvider.useFactory).toBeDefined()
+		expect(rateLimitOptionsProvider.inject).toBeDefined()
 	})
 })
