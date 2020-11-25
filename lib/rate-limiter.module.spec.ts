@@ -32,7 +32,7 @@ describe('RateLimiterModule', () => {
 		expect(rateLimitOptionsProvider.provide).toBe('RATE_LIMITER_OPTIONS')
 		expect(rateLimitOptionsProvider.useValue).toBeDefined()
 
-		const options: RateLimiterOptions = rateLimitOptionsProvider['useValue']
+		const options: RateLimiterOptions = rateLimitOptionsProvider.useValue
 
 		expect(options.for).toBe('Express')
 	})
