@@ -25,8 +25,8 @@ describe('RateLimit', () => {
 			}
 		}
 
-        const controller = new TestController()
-        controller.run()
+		const controller = new TestController()
+		controller.run()
 
 		expect(testFn).toHaveBeenCalled()
 	})
