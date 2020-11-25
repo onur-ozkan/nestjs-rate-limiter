@@ -7,3 +7,5 @@ npm-debug.log
 
 # dist
 /dist
+
+/coverage
