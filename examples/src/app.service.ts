@@ -7,7 +7,6 @@ export class AppService {
 
       return new Promise( resolve => {
         setTimeout(()=>{
-          console.log('Resolving timeout');
           resolve('Hello');
         }, 3000);
       });
