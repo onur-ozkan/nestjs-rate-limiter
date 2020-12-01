@@ -48,6 +48,7 @@
   - [errorMessage](https://github.com/ozkanonur/nestjs-rate-limiter#-errorMessage)
 - [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
 - [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
+- [Examples](https://github.com/ozkanonur/nestjs-rate-limiter/examples/README.md)
 
 # Description
 
