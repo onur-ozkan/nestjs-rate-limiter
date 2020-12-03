@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "projects": {
+    "rate-limiter-express-app": {
+      "root": "apps/rate-limiter-express-app",
+      "sourceRoot": "apps/rate-limiter-express-app/src",
+      "projectType": "application",
+      "prefix": "rate-limiter-express-app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/rate-limiter-express-app",
+            "main": "apps/rate-limiter-express-app/src/main.ts",
+            "tsConfig": "apps/rate-limiter-express-app/tsconfig.app.json",
+            "assets": ["apps/rate-limiter-express-app/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/rate-limiter-express-app/src/environments/environment.ts",
+                  "with": "apps/rate-limiter-express-app/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "rate-limiter-express-app:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/rate-limiter-express-app/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/rate-limiter-express-app/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/nest"
+  },
+  "defaultProject": "rate-limiter-express-app"
+}

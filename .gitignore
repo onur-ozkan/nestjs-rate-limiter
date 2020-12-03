@@ -9,3 +9,7 @@ npm-debug.log
 /dist
 
 /coverage
+
+# Example NestJS
+examples/dist
+examples/node_modules
