@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
-import { AppService } from './app.service';
-import { RateLimit } from '../../../../../dist';
+import { AppService } from '../services/app.service';
+import { RateLimit } from '../../../../../../dist';
 
 @Controller()
 export class AppController {

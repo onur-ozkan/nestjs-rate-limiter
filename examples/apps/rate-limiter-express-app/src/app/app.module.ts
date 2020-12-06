@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './controllers/app.controller';
+import { AppService } from './services/app.service';
 import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
 
 @Module({
