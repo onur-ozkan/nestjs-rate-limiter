@@ -1,3 +1,4 @@
+// tslint:disable-next-line: no-var-requires
 const loadtest = require('loadtest');
 import { LoadTestOptions, LoadTestResponse } from './loadtest-model'
 
