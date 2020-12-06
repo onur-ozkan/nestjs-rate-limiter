@@ -1,7 +1,7 @@
 const loadtest = require('loadtest');
 const options = {
     url: 'http://localhost:3333/api',
-    maxRequests: 1,
+    maxRequests: 4,
     maxSeconds: 3,
     timeout: 300
 };

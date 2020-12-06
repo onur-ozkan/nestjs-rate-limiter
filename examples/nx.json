@@ -25,6 +25,9 @@
   "projects": {
     "rate-limiter-express-app": {
       "tags": []
+    },
+    "rate-limiter-express-test-app": {
+      "tags": []
     }
   }
 }

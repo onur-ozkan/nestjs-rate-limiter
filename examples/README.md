@@ -15,3 +15,16 @@ The following is the examples directory for the nestjs-reate-limiter.  The follo
 ```
 nx serve rate-limiter-express-app
 ```
+
+# Examples to test
+## keyPrefix - multiple keyPrefix
+
+## Points, PointsConsumed, duration and blockDuration
+
+## inmemoryBlockOnConsumed
+
+## queueEnabled and maxQueueSize
+
+## WhiteList and blackList
+
+## execEvenly and execEvenlyMinDelayMs
