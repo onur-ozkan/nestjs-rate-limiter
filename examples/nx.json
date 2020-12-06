@@ -31,6 +31,9 @@
     },
     "rate-limiter-points-test": {
       "tags": []
+    },
+    "loadtest-common": {
+      "tags": []
     }
   }
 }
