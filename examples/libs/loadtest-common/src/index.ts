@@ -1,2 +1,2 @@
 export { runLoadTest } from './lib/loadtest-common';
-export { LoadTestResponse } from './lib/loadtest-model';
+export { LoadTestResponse, LoadTestOptions } from './lib/loadtest-model';

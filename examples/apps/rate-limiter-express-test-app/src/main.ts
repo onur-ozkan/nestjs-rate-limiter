@@ -1,31 +1,12 @@
-const loadtest = require ('loadtest');
-const options = {
-    url: 'http://localhost:3333/api',
-    maxRequests: 4,
-    maxSeconds: 3,
-    timeout: 300
-};
+import { testBelowMaximumPoints, testExceedingMaximumPoints } from '@examples/rate-limiter-points-test';
 
-const runTest = async ( options: any ) => {
-    console.log( 'Calling run test');
-    return new Promise( (resolve, reject) => {
-        loadtest.loadTest(options, (error: any, result: unknown) => {
-            console.log( 'Received Response')
-            if (error){
-                return reject(`Got an error: ${error}`);
-            } else {
-                console.log('Tests run successfully');
-                return resolve(result);
-            }
-        });
-    });
-};
-
+const BASE_URL  = 'http://localhost:3333/api';
 
 const execute = async () => {
     try{
-        const resp = await runTest(options);
-        console.log( 'resp', resp);
+        const testBelowMaximumPointsSuccess = await testBelowMaximumPoints(BASE_URL);
+
+        const testExceedingMaximumPointsSuccess = await testExceedingMaximumPoints(BASE_URL);
         process.exit(1);
     }catch(err){
         console.log( 'Err', err);

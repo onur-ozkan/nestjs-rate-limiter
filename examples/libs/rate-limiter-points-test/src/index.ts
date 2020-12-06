@@ -1,1 +1,1 @@
-export * from './lib/rate-limiter-points-test';
+export { testBelowMaximumPoints, testExceedingMaximumPoints } from './lib/rate-limiter-points-test';
