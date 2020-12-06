@@ -28,6 +28,9 @@
     },
     "rate-limiter-express-test-app": {
       "tags": []
+    },
+    "rate-limiter-points-test": {
+      "tags": []
     }
   }
 }

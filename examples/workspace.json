@@ -100,6 +100,27 @@
           }
         }
       }
+    },
+    "rate-limiter-points-test": {
+      "root": "libs/rate-limiter-points-test",
+      "sourceRoot": "libs/rate-limiter-points-test/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/rate-limiter-points-test/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/rate-limiter-points-test/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
