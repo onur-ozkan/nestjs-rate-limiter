@@ -10,7 +10,7 @@ export class AppController {
   @RateLimit({
     points: 1,
     pointsConsumed: 1,
-    duration: 60,
+    duration: 2,
     queueEnabled: true,
     errorMessage: 'Accounts cannot be created more than once in per minute' })
   @Get()

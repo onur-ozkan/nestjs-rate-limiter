@@ -52,6 +52,7 @@
     "eslint": "7.10.0",
     "eslint-config-prettier": "6.0.0",
     "jest": "26.2.2",
+    "loadtest": "^5.1.2",
     "prettier": "2.1.2",
     "ts-jest": "26.4.0",
     "ts-node": "~7.0.0",
