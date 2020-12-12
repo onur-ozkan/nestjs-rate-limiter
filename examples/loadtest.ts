@@ -7,8 +7,8 @@ const options = {
     timeout: 300
 };
 
+// tslint:disable-next-line: no-shadowed-variable
 const runTest = async ( options: any ) => {
-    console.log( 'Calling run test');
     return new Promise( (resolve, reject) => {
         loadtest.loadTest(options, (error: any, result: unknown) => {
             if (error){

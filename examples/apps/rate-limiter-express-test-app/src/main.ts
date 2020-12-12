@@ -11,7 +11,6 @@ const execute = async () => {
         assert (await testExceedingMaximumPoints(BASE_URL) );
         process.exit(1);
     }catch(err){
-        console.log( 'Err', err);
         process.exit(1);
     }
 }
