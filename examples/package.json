@@ -2,6 +2,32 @@
   "name": "examples",
   "version": "0.0.0",
   "license": "MIT",
+  "description": "The following is an example library for nestjs-rate-limiter",
+  "author": "Shannon Lal <shannonlal@hotmail.com>",
+  "contributors": [
+    "Ryan Dowling <ryan@ryandowling.me>",
+    "Onur Ozkan <onurozkan.dev@outlook.com>",
+    "Shannon Lal <shannonlal@hotmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ozkanonur/nestjs-rate-limiter.git"
+  },
+  "keywords": [
+    "nestjs",
+    "nest",
+    "rate-limiter",
+    "request-limiter",
+    "security",
+    "examples"
+  ],
+  "bugs": {
+    "url": "https://github.com/ozkanonur/nestjs-rate-limiter/issues"
+  },
+  "homepage": "https://github.com/ozkanonur/nestjs-rate-limiter#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
