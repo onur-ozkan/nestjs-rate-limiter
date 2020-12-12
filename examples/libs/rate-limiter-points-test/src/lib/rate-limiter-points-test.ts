@@ -17,9 +17,9 @@ export const testBelowMaximumPoints = async ( url: string): Promise<boolean> => 
   try{
     const response: LoadTestResponse = await runLoadTest( options );
 
-    console.log( response );
-    return true;
+    return (response.totalRequests === 2 && response.totalErrors === 0 );
   }catch( err ){
+    // tslint:disable-next-line: no-console
     console.log( `Unexpected error testing points consumed ${err}`)
     return false;
   }
@@ -34,10 +34,9 @@ export const testExceedingMaximumPoints = async ( url: string): Promise<boolean>
   };
   try{
     const response: LoadTestResponse = await runLoadTest( options );
-
-    console.log( response );
-    return true;
+    return (response.totalRequests === 5 && response.totalErrors === 4 );
   }catch( err ){
+    // tslint:disable-next-line: no-console
     console.log( `Unexpected error testing points consumed ${err}`)
     return false;
   }

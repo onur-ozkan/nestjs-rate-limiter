@@ -4,7 +4,7 @@ import { AppService } from '../services/app.service';
 import { RateLimit } from '../../../../../../dist';
 
 @Controller('points')
-export class AppController {
+export class PointsController {
   constructor(private readonly appService: AppService) {}
 
   @RateLimit({
@@ -13,7 +13,12 @@ export class AppController {
     errorMessage: 'Accounts cannot be created more than once in per minute' })
   @Get()
   async getPoints() {
-    return this.appService.getData();
+    try{
+      const resp = await this.appService.getData();
+      return resp;
+    }catch(err){
+      throw err;
+    }
   }
 
   @RateLimit({
@@ -23,6 +28,11 @@ export class AppController {
     errorMessage: 'Accounts cannot be created more than once in per minute' })
   @Get('/consumed')
   async getPointsConsumed() {
-    return this.appService.getData();
+    try{
+      const resp = await this.appService.getData();
+      return resp;
+    }catch(err){
+      throw err;
+    }
   }
 }
