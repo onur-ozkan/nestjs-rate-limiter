@@ -17,6 +17,7 @@ nx serve rate-limiter-express-app
 ```
 
 # Examples to test
+NOTE: To be flushed out in more detail.  TBD.  If this PR is approved will expand on this.
 ## keyPrefix - multiple keyPrefix
 
 ## Points, PointsConsumed, duration and blockDuration
