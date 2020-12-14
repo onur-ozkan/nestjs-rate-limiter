@@ -14,10 +14,16 @@ describe('AppService', () => {
   });
 
   describe('getData', () => {
-    it('should return "Welcome to rate-limiter-express-app!"', () => {
-      expect(service.getData()).toEqual({
-        message: 'Welcome to rate-limiter-express-app!',
-      });
+    it('should return "Welcome to rate-limiter-express-app!"', async () => {
+
+      try{
+        const data = await service.getData();
+        expect(data).toEqual({
+          message: 'Welcome to rate-limiter-express-app!',
+        });
+      }catch(err){
+        expect(err).toBeUndefined();
+      }
     });
   });
 });

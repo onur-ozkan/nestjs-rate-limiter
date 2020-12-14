@@ -50,6 +50,98 @@
           }
         }
       }
+    },
+    "rate-limiter-express-test-app": {
+      "root": "apps/rate-limiter-express-test-app",
+      "sourceRoot": "apps/rate-limiter-express-test-app/src",
+      "projectType": "application",
+      "prefix": "rate-limiter-express-test-app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/rate-limiter-express-test-app",
+            "main": "apps/rate-limiter-express-test-app/src/main.ts",
+            "tsConfig": "apps/rate-limiter-express-test-app/tsconfig.app.json",
+            "assets": ["apps/rate-limiter-express-test-app/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/rate-limiter-express-test-app/src/environments/environment.ts",
+                  "with": "apps/rate-limiter-express-test-app/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "rate-limiter-express-test-app:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/rate-limiter-express-test-app/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/rate-limiter-express-test-app/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "rate-limiter-points-test": {
+      "root": "libs/rate-limiter-points-test",
+      "sourceRoot": "libs/rate-limiter-points-test/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/rate-limiter-points-test/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/rate-limiter-points-test/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "loadtest-common": {
+      "root": "libs/loadtest-common",
+      "sourceRoot": "libs/loadtest-common/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/loadtest-common/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/loadtest-common/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

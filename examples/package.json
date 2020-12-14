@@ -2,6 +2,32 @@
   "name": "examples",
   "version": "0.0.0",
   "license": "MIT",
+  "description": "The following is an example library for nestjs-rate-limiter",
+  "author": "Shannon Lal <shannonlal@hotmail.com>",
+  "contributors": [
+    "Ryan Dowling <ryan@ryandowling.me>",
+    "Onur Ozkan <onurozkan.dev@outlook.com>",
+    "Shannon Lal <shannonlal@hotmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ozkanonur/nestjs-rate-limiter.git"
+  },
+  "keywords": [
+    "nestjs",
+    "nest",
+    "rate-limiter",
+    "request-limiter",
+    "security",
+    "examples"
+  ],
+  "bugs": {
+    "url": "https://github.com/ozkanonur/nestjs-rate-limiter/issues"
+  },
+  "homepage": "https://github.com/ozkanonur/nestjs-rate-limiter#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
@@ -52,10 +78,16 @@
     "eslint": "7.10.0",
     "eslint-config-prettier": "6.0.0",
     "jest": "26.2.2",
+    "loadtest": "^5.1.2",
+    "mocha": "^8.2.1",
     "prettier": "2.1.2",
     "ts-jest": "26.4.0",
+    "ts-mocha": "^8.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~6.0.0",
     "typescript": "~4.0.3"
+  },
+  "jest": {
+    "timers": "real"
   }
 }

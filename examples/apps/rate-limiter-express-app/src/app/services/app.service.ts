@@ -6,7 +6,7 @@ export class AppService {
 
     try{
       return new Promise( resolve => {
-        resolve({message:'Welcome to rate-limiter-express-app!'});
+        return resolve({message:'Welcome to rate-limiter-express-app!'});
       })
     }catch(err){
       throw err;

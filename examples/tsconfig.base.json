@@ -15,7 +15,12 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@examples/rate-limiter-points-test": [
+        "libs/rate-limiter-points-test/src/index.ts"
+      ],
+      "@examples/loadtest-common": ["libs/loadtest-common/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
