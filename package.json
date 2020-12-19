@@ -1,6 +1,6 @@
 {
   "name": "nestjs-rate-limiter",
-  "version": "2.5.6",
+  "version": "2.6.5",
   "description": "Highly configurable rate limiter library",
   "repository": {
     "type": "git",
@@ -28,8 +28,7 @@
     "access": "public"
   },
   "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "tsc -p tsconfig.json",
+    "build": "rm -rf dist && tsc -p tsconfig.json",
     "lint": "prettier --write lib",
     "test": "jest --config ./jest.config.js"
   },
