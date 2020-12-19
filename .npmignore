@@ -1,9 +1,11 @@
-# don't upload these to NPM
-.vscode/
+.vscode
+examples
+coverage
 lib
 .gitignore
 .prettierrc
-README.md
+jest.config.js
 package-lock.json
 tsconfig.json
 tslint.json
+README.md
