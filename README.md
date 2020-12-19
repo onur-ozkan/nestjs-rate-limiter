@@ -135,7 +135,7 @@ route basis:
 ```ts
 import { RateLimit } from 'nestjs-rate-limiter';
 
-@RateLimit({ points: 1, duration: 60, errorMessage: 'Accounts cannot be created more than once in per minute' })
+@RateLimit({ keyPrefix: 'sign-up', points: 1, duration: 60, errorMessage: 'Accounts cannot be created more than once in per minute' })
 @Get('/signup')
 public async signUp() {
     console.log('hello');
