@@ -16,4 +16,5 @@ export interface LoadTestOptions {
     maxRequests: number;
     maxSeconds: number;
     timeout: number;
+    concurrency?: number;
 }
