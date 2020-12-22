@@ -1,9 +1,9 @@
-import { 
-    testBelowMaximumPoints, 
-    testExceedingMaximumPoints, 
-    testBlockLocalhost, 
-    testBlockNonLocalhost, 
-    testWhiteListLocalhost, 
+import {
+    testBelowMaximumPoints,
+    testExceedingMaximumPoints,
+    testBlockLocalhost,
+    testBlockNonLocalhost,
+    testWhiteListLocalhost,
     testRestrictLocalhost } from '@examples/rate-limiter-points-test';
 import * as assert from 'assert';
 
