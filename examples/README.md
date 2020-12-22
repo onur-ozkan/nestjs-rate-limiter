@@ -22,8 +22,6 @@ NOTE: To be flushed out in more detail.  TBD.  If this PR is approved will expan
 
 ## Points, PointsConsumed, duration and blockDuration
 
-## inmemoryBlockOnConsumed
-
 ## queueEnabled and maxQueueSize
 
 ## WhiteList and blackList
