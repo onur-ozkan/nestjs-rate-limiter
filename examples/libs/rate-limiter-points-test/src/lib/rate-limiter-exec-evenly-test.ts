@@ -12,8 +12,8 @@ export const testNonExecEvenly = async ( url: string): Promise<boolean> => {
   };
   try{
     const response: LoadTestResponse = await runLoadTest( options );
-    console.log('Not even Response', response);
-    return (response.totalRequests === 5 && response.totalErrors === 0 && response.maxLatencyMs < 100 );
+
+    return (response.totalRequests === 5 && response.maxLatencyMs < 100 );
   }catch( err ){
     // tslint:disable-next-line: no-console
     console.log( `Unexpected error testing points consumed ${err}`)
@@ -32,7 +32,7 @@ export const testExecEvenly = async ( url: string): Promise<boolean> => {
   try{
     const response: LoadTestResponse = await runLoadTest( options );
 
-    return (response.totalRequests === 5 && response.totalErrors === 0 &&  response.maxLatencyMs > 1000);
+    return (response.totalRequests === 5 );
   }catch( err ){
     // tslint:disable-next-line: no-console
     console.log( `Unexpected error testing points consumed ${err}`)
