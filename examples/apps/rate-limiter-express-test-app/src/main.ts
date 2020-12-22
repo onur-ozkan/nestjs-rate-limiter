@@ -5,7 +5,8 @@ import {
     testBlockNonLocalhost,
     testWhiteListLocalhost,
     testRestrictLocalhost,
-    testExecEvenly
+    testExecEvenly,
+    testNonExecEvenly
  } from '@examples/rate-limiter-points-test';
 import * as assert from 'assert';
 
@@ -24,6 +25,8 @@ const execute = async () => {
         assert( await testWhiteListLocalhost(BASE_URL));
 
         assert( await testRestrictLocalhost(BASE_URL));*/
+        console.log( 'Start not even ');
+        assert( await testNonExecEvenly(BASE_URL));
         console.log( 'Starting even');
         assert( await testExecEvenly(BASE_URL));
         console.log( 'Completed even');
