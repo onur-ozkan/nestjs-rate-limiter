@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AppController, PointsController } from './controllers';
+import { AppController, PointsController, BlackWhiteController } from './controllers';
 import { AppService } from './services/app.service';
 import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
 
 @Module({
   imports: [RateLimiterModule],
-  controllers: [AppController, PointsController],
+  controllers: [AppController, PointsController, BlackWhiteController],
   providers: [AppService,
     {
       provide: APP_INTERCEPTOR,
