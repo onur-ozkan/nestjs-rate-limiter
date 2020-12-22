@@ -35,7 +35,7 @@ export class BlackWhiteController {
   @Get('/enablelocal')
   async getEnableLocalHost() {
       // The following enpoint will restrict all IP addresses to 1 request every
-      // 10 seconds, except localhost ```::1``` 
+      // 10 seconds, except localhost ```::1```
       const resp = await this.appService.getData();
       return resp;
   }
