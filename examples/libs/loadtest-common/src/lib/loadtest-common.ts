@@ -26,3 +26,9 @@ const executeLoadTest = (options: LoadTestOptions): Promise<LoadTestResponse> =>
         });
     });
 }
+
+export const  wait = async (ms): Promise<void> => {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
+  }
