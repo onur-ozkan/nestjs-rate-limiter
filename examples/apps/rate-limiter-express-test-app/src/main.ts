@@ -1,3 +1,4 @@
+import { w} from '@examples/loadtest-common';
 import {
     testBelowMaximumPoints,
     testExceedingMaximumPoints,
@@ -14,21 +15,22 @@ const BASE_URL  = 'http://localhost:3333/api';
 
 const execute = async () => {
     try{
-        /*assert (await testBelowMaximumPoints(BASE_URL) );
+        console.log( 'Started test');
+        //assert (await testBelowMaximumPoints(BASE_URL) );
 
-        assert (await testExceedingMaximumPoints(BASE_URL) );
+        //assert (await testExceedingMaximumPoints(BASE_URL) );
 
-        assert ( await testBlockLocalhost(BASE_URL));
+        //assert ( await testBlockLocalhost(BASE_URL));
 
-        assert ( await testBlockNonLocalhost(BASE_URL));
+        //assert ( await testBlockNonLocalhost(BASE_URL));
 
-        assert( await testWhiteListLocalhost(BASE_URL));
+        //assert( await testWhiteListLocalhost(BASE_URL));
 
-        assert( await testRestrictLocalhost(BASE_URL));*/
-        console.log( 'Start not even ');
+        //assert( await testRestrictLocalhost(BASE_URL));
+        console.log( 'Test Restrict Local');
         assert( await testNonExecEvenly(BASE_URL));
-        console.log( 'Starting even');
-        assert( await testExecEvenly(BASE_URL));
+
+        //assert( await testExecEvenly(BASE_URL));
         console.log( 'Completed even');
         process.exit(1);
     }catch(err){
