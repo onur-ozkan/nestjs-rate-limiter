@@ -10,6 +10,7 @@ export class ExecEvenlyController {
   @RateLimit({
     points: 1,
     duration: 5,
+    execEvenly: true,
     errorMessage: 'Execeed maximum number of requests' })
   @Get('/evenly')
   async getExecEvenly() {
