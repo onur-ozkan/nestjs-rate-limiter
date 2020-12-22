@@ -2,11 +2,6 @@ import { runLoadTest, LoadTestResponse, LoadTestOptions} from '@examples/loadtes
 
 const POINTS_CONSUMED_ROUTE = '/points';
 
-export function rateLimiterPointsTest(): string {
-  return 'rate-limiter-points-test';
-}
-
-
 export const testBelowMaximumPoints = async ( url: string): Promise<boolean> => {
   const options: LoadTestOptions  = {
     url: `${url}${POINTS_CONSUMED_ROUTE}`,
