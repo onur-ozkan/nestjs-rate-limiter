@@ -13,7 +13,6 @@ export const testGlobalKeyprefix = async ( url: string): Promise<boolean> => {
   try{
     const response: LoadTestResponse  = await runLoadTest( options );
 
-    console.log( 'Response ', response);
     return (response.totalRequests === 1 && response.totalErrors ===  0);
   }catch( err ){
     // tslint:disable-next-line: no-console
@@ -33,7 +32,6 @@ export const testUniqueKeyprefix = async ( url: string): Promise<boolean> => {
   try{
     const response: LoadTestResponse  = await runLoadTest( options );
 
-    console.log( 'Response ', response);
     return (response.totalRequests === 5 && response.totalErrors ===  0);
   }catch( err ){
     // tslint:disable-next-line: no-console

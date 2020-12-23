@@ -13,7 +13,7 @@ export const testBlockLocalhost = async ( url: string): Promise<boolean> => {
   try{
     const response: LoadTestResponse  = await runLoadTest( options );
 
-    return (response.totalRequests === 5 && response.totalErrors === 5 );
+    return (response.totalRequests === 5 && response.totalErrors === 1 );
   }catch( err ){
     // tslint:disable-next-line: no-console
     console.log( `Unexpected error testing points consumed ${err}`)
