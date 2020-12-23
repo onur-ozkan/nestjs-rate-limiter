@@ -13,7 +13,7 @@ export class ExecEvenlyController {
     errorMessage: 'Execeed maximum number of requests' })
   @Get('/notevenly')
   async getExecNotEvenly() {
-      // Will return the responses as they come in 
+      // Will return the responses as they come in
       const resp = await this.appService.getData();
       return resp;
   }
