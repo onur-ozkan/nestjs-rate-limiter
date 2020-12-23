@@ -24,7 +24,7 @@ export class KeyPrefixController {
     keyPrefix: 'unique',
     errorMessage: 'Too many requests on the endpoint' })
   @Get('/unique')
-  async getBlockSpecificIP() {
+  async getUniqueKeyPrefix() {
       const resp = await this.appService.getData();
       return resp;
   }
