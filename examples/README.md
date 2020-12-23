@@ -34,3 +34,18 @@ The corresponding test case for this can be found in the following directory [Bl
 
 
 ## execEvenly and execEvenlyMinDelayMs
+
+The execute evenly ```execEvenly ``` indicates to the rate limiter to respond to the incoming requests in an even distrubtion over the duration.  As an example 
+```
+@RateLimit({
+    points: 5,
+    duration: 5,
+    execEvenlyMinDelayMs: 200,
+    execEvenly: true})
+```
+
+The above configuration will force the api to hold incoming requests and distribute the response evenly over the duration (i.e. 5 seconds).  It will attempt to respond to each request every 200 milliseconds.  
+
+The controller that is used to demonstrate this is found in the following directory [ExecEvenlyController] (https://github.com/ozkanonur/nestjs-rate-limiter/examples/apps/rate-limiter-express-app/src/app/controllers/exec.controller.ts).  This controler contains 2 different scenarios that demonstrate both how the execEvenly 
+
+The corresponding test case for this can be found in the following directory [Exec Evenly Tests](https://github.com/ozkanonur/nestjs-rate-limiter/examples/libs/rate-limiter-points-test/src/lib/rate-limiter-exec-evenly-test.ts)
