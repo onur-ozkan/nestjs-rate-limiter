@@ -28,7 +28,8 @@ const execute = async () => {
         assert( await testGlobalKeyprefix(BASE_URL));
 
         assert( await testUniqueKeyprefix(BASE_URL));
-        
+
+        console.log( 'Test complete');
         process.exit(1);
     }catch(err){
         process.exit(1);
