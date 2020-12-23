@@ -5,7 +5,7 @@ import {
     testBlockNonLocalhost,
     testWhiteListLocalhost,
     testRestrictLocalhost,
-    testGlobalKeyprefix, 
+    testGlobalKeyprefix,
     testUniqueKeyprefix } from '@examples/rate-limiter-points-test';
 import * as assert from 'assert';
 
@@ -29,7 +29,6 @@ const execute = async () => {
 
         assert( await testUniqueKeyprefix(BASE_URL));
 
-        console.log( 'Test complete');
         process.exit(1);
     }catch(err){
         process.exit(1);

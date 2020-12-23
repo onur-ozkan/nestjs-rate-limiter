@@ -7,8 +7,8 @@ import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
 @Module({
   imports: [RateLimiterModule],
   controllers: [
-    AppController, 
-    PointsController, 
+    AppController,
+    PointsController,
     BlackWhiteController,
     KeyPrefixController],
   providers: [AppService,
