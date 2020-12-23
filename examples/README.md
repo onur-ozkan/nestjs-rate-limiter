@@ -16,8 +16,8 @@ The following is the examples directory for the nestjs-reate-limiter.  The follo
 nx serve rate-limiter-express-app
 ```
 
-# Examples to test
-NOTE: To be flushed out in more detail.  TBD.  If this PR is approved will expand on this.
+# Examples Controllers and test cases
+
 ## keyPrefix - multiple keyPrefix
 
 ## Points, PointsConsumed, duration and blockDuration
@@ -25,5 +25,12 @@ NOTE: To be flushed out in more detail.  TBD.  If this PR is approved will expan
 ## queueEnabled and maxQueueSize
 
 ## WhiteList and blackList
+The whitelist and blacklist options are used to configure the rate limiter to allow and block requests based on the client's IP Address.  The controller that is used to demonstrate this is found in the following directory [BlackWhiteController] (https://github.com/ozkanonur/nestjs-rate-limiter/examples/apps/rate-limiter-express-app/src/app/controllers/blackwhite.controller.ts).  This controler contains 4 different scenarios that demonstrate both how whitelist and blacklisting of IP addresses works
+
+The corresponding test case for this can be found in the following directory [BlackWhite Tests](https://github.com/ozkanonur/nestjs-rate-limiter/examples/libs/rate-limiter-points-test/src/lib/rate-limiter-blackwhite-test.ts)
+
+
+
+
 
 ## execEvenly and execEvenlyMinDelayMs
