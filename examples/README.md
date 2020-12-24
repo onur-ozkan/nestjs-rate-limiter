@@ -20,6 +20,28 @@ nx serve rate-limiter-express-app
 NOTE: To be flushed out in more detail.  TBD.  If this PR is approved will expand on this.
 ## keyPrefix - multiple keyPrefix
 
+The keyPrefix options are used to configure different rate limiter parameters for each module or endpoint.  If you are implementing different options for modules/endpoints, adding a ```prefix``` attribute will ensure that those options will only be associated to that endpoint.  The following is an example:
+
+```
+  @RateLimit({
+    points: 1,
+    duration: 3,
+    errorMessage: 'Too many requests on the endpoint' })
+  @Get('/global')
+```
+
+In the above decorator, the following rate limit options will be applied to the global prefix and thus to all endpoints (i.e. with the exception of those with a prefix).  If the decorator below, a prefix is defined and thus those options are applied to endpoints with that prefix
+
+```
+  @RateLimit({
+    points: 5,
+    duration: 3,
+    keyPrefix: 'unique',
+    errorMessage: 'Too many requests on the endpoint' })
+  @Get('/unique')
+```
+
+
 ## Points, PointsConsumed, duration and blockDuration
 
 ## inmemoryBlockOnConsumed

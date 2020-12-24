@@ -10,6 +10,7 @@ export class PointsController {
   @RateLimit({
     points: 3,
     duration: 2,
+    keyPrefix: 'points',
     errorMessage: 'Accounts cannot be created more than once in per minute' })
   @Get()
   async getPoints() {
@@ -21,6 +22,7 @@ export class PointsController {
     points: 1,
     pointsConsumed: 1,
     duration: 2,
+    keyPrefix: 'points-consumed',
     errorMessage: 'Accounts cannot be created more than once in per minute' })
   @Get('/consumed')
   async getPointsConsumed() {
