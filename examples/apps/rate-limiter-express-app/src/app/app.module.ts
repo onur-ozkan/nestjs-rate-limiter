@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AppController, PointsController, BlackWhiteController, KeyPrefixController } from './controllers';
+import {
+  AppController,
+  PointsController,
+  BlackWhiteController,
+  ExecEvenlyController,
+  KeyPrefixController } from './controllers';
+
 import { AppService } from './services/app.service';
 import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
 
@@ -10,6 +16,7 @@ import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
     AppController,
     PointsController,
     BlackWhiteController,
+    ExecEvenlyController,
     KeyPrefixController],
   providers: [AppService,
     {

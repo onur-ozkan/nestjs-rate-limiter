@@ -1,3 +1,4 @@
+import { wait } from '@examples/loadtest-common';
 import {
     testBelowMaximumPoints,
     testExceedingMaximumPoints,
@@ -5,8 +6,12 @@ import {
     testBlockNonLocalhost,
     testWhiteListLocalhost,
     testRestrictLocalhost,
+    testExecEvenly,
+    testNonExecEvenly,
     testGlobalKeyprefix,
-    testUniqueKeyprefix } from '@examples/rate-limiter-points-test';
+    testUniqueKeyprefix
+ } from '@examples/rate-limiter-points-test';
+
 import * as assert from 'assert';
 
 const BASE_URL  = 'http://localhost:3333/api';
@@ -18,6 +23,7 @@ const execute = async () => {
         assert (await testExceedingMaximumPoints(BASE_URL) );
 
         assert ( await testBlockLocalhost(BASE_URL));
+        await wait(5000);
 
         assert ( await testBlockNonLocalhost(BASE_URL));
 
@@ -25,6 +31,11 @@ const execute = async () => {
 
         assert( await testRestrictLocalhost(BASE_URL));
 
+        await wait(5000);
+        assert( await testNonExecEvenly(BASE_URL));
+
+        await wait(5000);
+        assert( await testExecEvenly(BASE_URL));
         assert( await testGlobalKeyprefix(BASE_URL));
 
         assert( await testUniqueKeyprefix(BASE_URL));
