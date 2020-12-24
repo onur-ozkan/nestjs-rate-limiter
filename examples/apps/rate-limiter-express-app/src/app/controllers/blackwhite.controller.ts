@@ -9,6 +9,7 @@ export class BlackWhiteController {
 
   @RateLimit({
     blackList:['1'],
+    keyPrefix: 'blocklocal',
     errorMessage: 'The IP Address has been blocked' })
   @Get('/blocklocal')
   async getBlockLocal() {
@@ -20,6 +21,7 @@ export class BlackWhiteController {
 
   @RateLimit({
     blackList:['192.168.0.11', '192.168.2.101'],
+    keyPrefix: 'blockspecific',
     errorMessage: 'The IP Address has been blocked' })
   @Get('/blockspecific')
   async getBlockSpecificIP() {
@@ -30,6 +32,7 @@ export class BlackWhiteController {
   @RateLimit({
       points: 1,
       duration: 10,
+      keyPrefix: 'enablelocal',
       whiteList:['1', '127.0.0.1'],
       errorMessage: 'The IP Address is making too many requests' })
   @Get('/enablelocal')
@@ -43,6 +46,7 @@ export class BlackWhiteController {
   @RateLimit({
     points: 1,
     duration: 10,
+    keyPrefix: 'restrictlocal',
     whiteList:['192.168.0.1','192.168.2.101'],
     errorMessage: 'The IP Address is making too many requests' })
   @Get('/restrictlocal')

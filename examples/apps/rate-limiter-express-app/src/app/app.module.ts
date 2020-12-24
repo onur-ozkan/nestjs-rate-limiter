@@ -4,7 +4,9 @@ import {
   AppController,
   PointsController,
   BlackWhiteController,
-  ExecEvenlyController } from './controllers';
+  ExecEvenlyController,
+  KeyPrefixController } from './controllers';
+
 import { AppService } from './services/app.service';
 import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
 
@@ -14,7 +16,8 @@ import { RateLimiterModule, RateLimiterInterceptor } from '../../../../../dist';
     AppController,
     PointsController,
     BlackWhiteController,
-    ExecEvenlyController],
+    ExecEvenlyController,
+    KeyPrefixController],
   providers: [AppService,
     {
       provide: APP_INTERCEPTOR,
