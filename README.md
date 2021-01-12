@@ -142,6 +142,18 @@ public async signUp() {
 }
 ```
 
+### Dynamic Keyprefix
+
+```ts
+import { RateLimit } from 'nestjs-rate-limiter';
+
+@RateLimit({ keyPrefix: () => programmaticFuncThatReturnsValue(), points: 1, duration: 60, errorMessage: 'You can only request 1 in a minute by giving access token' })
+@Get('/example')
+public async example() {
+    console.log('hello');
+}
+```
+
 ### With All Options
 
 The usage of the limiter options is as in the code block below. For an explanation of the each option, please see <code>[options](https://github.com/ozkanonur/nestjs-rate-limiter#options)</code>.
