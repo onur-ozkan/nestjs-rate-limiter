@@ -1,5 +1,6 @@
 import { Provider } from '@nestjs/common'
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces'
+import { RateLimiterRes } from 'rate-limiter-flexible'
 
 export interface RateLimiterOptions {
 	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
@@ -26,6 +27,7 @@ export interface RateLimiterOptions {
 	indexKeyPrefix?: {}
 	maxQueueSize?: number
 	errorMessage?: string
+	createErrorBody?: (rateLimiterResponse: RateLimiterRes) => {}
 }
 
 export interface RateLimiterOptionsFactory {

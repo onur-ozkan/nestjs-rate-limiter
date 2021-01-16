@@ -179,34 +179,21 @@ export class RateLimiterInterceptor implements NestInterceptor {
 	}
 
 	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number) {
-		if (this.options.for === 'Fastify' || this.options.for === 'FastifyGraphql') {
-			try {
-				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
-				else {
-					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
+		try {
+			if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
+			else {
+				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
 
-					response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-					response.header('X-RateLimit-Limit', points)
-					response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
-					response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
-				}
-			} catch (rateLimiterResponse) {
 				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				throw new HttpException(this.spesificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS)
+				response.header('X-RateLimit-Limit', points)
+				response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
+				response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
 			}
-		} else {
-			try {
-				if (this.spesificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
-				else {
-					const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
-
-					response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-					response.set('X-RateLimit-Limit', points)
-					response.set('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
-					response.set('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
-				}
-			} catch (rateLimiterResponse) {
-				response.set('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
+		} catch (rateLimiterResponse) {
+			response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
+			if (typeof this.options.createErrorBody === 'function') {
+				throw new HttpException(this.options.createErrorBody(rateLimiterResponse), HttpStatus.TOO_MANY_REQUESTS)
+			} else {
 				throw new HttpException(this.spesificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS)
 			}
 		}
