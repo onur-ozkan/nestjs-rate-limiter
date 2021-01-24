@@ -29,5 +29,6 @@ describe('defaultRateLimiterOptions', () => {
 		expect(Object.keys(defaultRateLimiterOptions.indexKeyPrefix).length).toBe(0)
 		expect(defaultRateLimiterOptions.maxQueueSize).toBe(100)
 		expect(defaultRateLimiterOptions.errorMessage).toBe('Rate limit exceeded')
+		expect(defaultRateLimiterOptions.customResponseSchema).toBeUndefined()
 	})
 })
