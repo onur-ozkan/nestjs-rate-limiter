@@ -464,7 +464,6 @@ GraphQLModule.forRoot({
 ```
 
 ## TODO
-- [ ] Create example projects for each technology
 - [ ] Support Websocket
 - [ ] Support Rpc
-- [ ] Tests & Github Actions (for automatic npm deployment on master branch)
+- [ ] Github Actions
