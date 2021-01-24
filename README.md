@@ -46,6 +46,7 @@
   - [indexKeyPrefix](https://github.com/ozkanonur/nestjs-rate-limiter#-indexKeyPrefix)
   - [maxQueueSize](https://github.com/ozkanonur/nestjs-rate-limiter#-maxQueueSize)
   - [errorMessage](https://github.com/ozkanonur/nestjs-rate-limiter#-errorMessage)
+  - [customResponseSchema](https://github.com/ozkanonur/nestjs-rate-limiter#-customResponseSchema)
 - [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
 - [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
 - [Examples](https://github.com/ozkanonur/nestjs-rate-limiter/examples/README.md)
