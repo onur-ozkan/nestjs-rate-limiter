@@ -147,7 +147,12 @@ public async signUp() {
 ```ts
 import { RateLimit } from 'nestjs-rate-limiter';
 
-@RateLimit({ keyPrefix: () => programmaticFuncThatReturnsValue(), points: 1, duration: 60, errorMessage: 'You can only request 1 in a minute by giving access token' })
+@RateLimit({
+  keyPrefix: () => programmaticFuncThatReturnsValue(),
+  points: 1,
+  duration: 60,
+  customResponseSchema: () => { return { timestamp: '1611479696', message: 'Request has been blocked' }}
+})
 @Get('/example')
 public async example() {
     console.log('hello');
@@ -186,7 +191,8 @@ The usage of the limiter options is as in the code block below. For an explanati
             execEvenlyMinDelayMs: undefined,
             indexKeyPrefix: {},
             maxQueueSize: 100,
-            errorMessage: 'Rate limit exceeded'
+            errorMessage: 'Rate limit exceeded',
+            customResponseSchema: undefined
         }),
     ],
     providers: [
@@ -431,6 +437,13 @@ GraphQLModule.forRoot({
 
   errorMessage option can change the error message of rate limiter exception.
 
+  #### ● customResponseSchema
+  <code> Default: undefined </code>
+  <br>
+  <code> Type: string</code>
+  <br>
+
+  customResponseSchema option allows to provide customizable response schemas
 # Benchmarks
 
 1000 concurrent clients with maximum 2000 requests per sec during 30 seconds.
