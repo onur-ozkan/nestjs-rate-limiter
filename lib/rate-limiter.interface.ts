@@ -27,6 +27,7 @@ export interface RateLimiterOptions {
 	indexKeyPrefix?: {}
 	maxQueueSize?: number
 	errorMessage?: string
+	logger?: boolean,
 	customResponseSchema?: (rateLimiterResponse: RateLimiterRes) => {}
 }
 
