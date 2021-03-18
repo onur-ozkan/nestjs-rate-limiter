@@ -193,6 +193,7 @@ The usage of the limiter options is as in the code block below. For an explanati
             indexKeyPrefix: {},
             maxQueueSize: 100,
             errorMessage: 'Rate limit exceeded',
+            logger: true,
             customResponseSchema: undefined
         }),
     ],
@@ -437,6 +438,14 @@ GraphQLModule.forRoot({
   <br>
 
   errorMessage option can change the error message of rate limiter exception.
+
+#### ● logger
+  <code> Default: true</code>
+  <br>
+  <code> Type: boolean</code>
+  <br>
+
+  logger option allows to enable or disable logging from library.
 
   #### ● customResponseSchema
   <code> Default: undefined </code>
