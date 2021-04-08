@@ -193,6 +193,7 @@ The usage of the limiter options is as in the code block below. For an explanati
             execEvenlyMinDelayMs: undefined,
             indexKeyPrefix: {},
             maxQueueSize: 100,
+            omitResponseHeaders: false,
             errorMessage: 'Rate limit exceeded',
             logger: true,
             customResponseSchema: undefined
