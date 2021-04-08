@@ -45,6 +45,7 @@
   - [execEvenlyMinDelayMs](https://github.com/ozkanonur/nestjs-rate-limiter#-execEvenlyMinDelayMs)
   - [indexKeyPrefix](https://github.com/ozkanonur/nestjs-rate-limiter#-indexKeyPrefix)
   - [maxQueueSize](https://github.com/ozkanonur/nestjs-rate-limiter#-maxQueueSize)
+  - [omitResponseHeaders](https://github.com/ozkanonur/nestjs-rate-limiter#-omitResponseHeaders)
   - [errorMessage](https://github.com/ozkanonur/nestjs-rate-limiter#-errorMessage)
   - [customResponseSchema](https://github.com/ozkanonur/nestjs-rate-limiter#-customResponseSchema)
 - [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
@@ -430,6 +431,15 @@ GraphQLModule.forRoot({
   <br>
 
   Determines the maximum number of requests in the queue and returns <code>429</code> as response to requests that over of the maxQueueSize.
+
+#### ● omitResponseHeaders
+  <code> Default: false</code>
+  <br>
+  <code> Type: boolean</code>
+  <br>
+
+  Whether or not the rate limit headers (<code>X-Retry-After</code>, <code>X-RateLimit-Limit</code>, <code>X-Retry-Remaining</code>, <code>X-Retry-Reset</code>) should be omitted in the response.
+
 
 #### ● errorMessage
   <code> Default: 'Rate limit exceeded'</code>
