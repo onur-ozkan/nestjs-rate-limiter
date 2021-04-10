@@ -42,7 +42,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 			libraryArguments.execEvenlyMinDelayMs = (this.options.duration * 1000) / this.options.points
 
 		if (!rateLimiter) {
-			const logger = this.specificOptions.logger
+			const logger = this.specificOptions?.logger || this.options.logger
 			switch (this.specificOptions?.type || this.options.type) {
 				case 'Memory':
 					rateLimiter = new RateLimiterMemory(libraryArguments)
