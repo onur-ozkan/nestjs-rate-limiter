@@ -1,6 +1,6 @@
 {
   "name": "nestjs-rate-limiter",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "Highly configurable rate limiter library",
   "repository": {
     "type": "git",
