@@ -191,21 +191,25 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		}
 	}
 
+	private async setResponseHeaders(response: any, points: number, rateLimiterResponse: RateLimiterRes) {
+		response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
+		response.header('X-RateLimit-Limit', points)
+		response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
+		response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
+	}
+
 	private async responseHandler(response: any, key: any, rateLimiter: RateLimiterAbstract, points: number, pointsConsumed: number) {
 		try {
 			if (this.specificOptions?.queueEnabled || this.options.queueEnabled) await this.queueLimiter.removeTokens(1)
 			else {
 				const rateLimiterResponse: RateLimiterRes = await rateLimiter.consume(key, pointsConsumed)
-
-				response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
-				response.header('X-RateLimit-Limit', points)
-				response.header('X-Retry-Remaining', rateLimiterResponse.remainingPoints)
-				response.header('X-Retry-Reset', new Date(Date.now() + rateLimiterResponse.msBeforeNext).toUTCString())
+				if (!this.specificOptions?.omitResponseHeaders && !this.options.omitResponseHeaders)
+					this.setResponseHeaders(response, points, rateLimiterResponse)
 			}
 		} catch (rateLimiterResponse) {
 			response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 			if (typeof this.specificOptions?.customResponseSchema === 'function' || typeof this.options.customResponseSchema === 'function') {
-				var errorBody = this.specificOptions?.customResponseSchema || this.options.customResponseSchema;
+				var errorBody = this.specificOptions?.customResponseSchema || this.options.customResponseSchema
 				throw new HttpException(errorBody(rateLimiterResponse), HttpStatus.TOO_MANY_REQUESTS)
 			} else {
 				throw new HttpException(this.specificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS)

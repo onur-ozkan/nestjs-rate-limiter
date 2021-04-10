@@ -26,8 +26,9 @@ export interface RateLimiterOptions {
 	execEvenlyMinDelayMs?: number
 	indexKeyPrefix?: {}
 	maxQueueSize?: number
+	omitResponseHeaders?: boolean
 	errorMessage?: string
-	logger?: boolean,
+	logger?: boolean
 	customResponseSchema?: (rateLimiterResponse: RateLimiterRes) => {}
 }
 
