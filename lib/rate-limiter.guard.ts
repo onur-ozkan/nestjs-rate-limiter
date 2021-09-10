@@ -209,7 +209,7 @@ export class RateLimiterGuard implements CanActivate {
 		} catch (rateLimiterResponse) {
 			response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000));
 			if (typeof this.specificOptions?.customResponseSchema === 'function' || typeof this.options.customResponseSchema === 'function') {
-				var errorBody = this.specificOptions?.customResponseSchema || this.options.customResponseSchema;
+				const errorBody = this.specificOptions?.customResponseSchema || this.options.customResponseSchema;
 				throw new HttpException(errorBody(rateLimiterResponse), HttpStatus.TOO_MANY_REQUESTS);
 			} else {
 				throw new HttpException(this.specificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS);
