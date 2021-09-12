@@ -1,5 +1,5 @@
 import { Reflector } from '@nestjs/core'
-import { NestInterceptor, Injectable, ExecutionContext, CallHandler, Inject, HttpStatus, Logger, HttpException } from '@nestjs/common'
+import { Injectable, ExecutionContext, Inject, HttpStatus, Logger, HttpException, CanActivate } from '@nestjs/common'
 import {
 	RateLimiterMemory,
 	RateLimiterRes,
@@ -17,7 +17,7 @@ import { RateLimiterOptions } from './rate-limiter.interface'
 import { defaultRateLimiterOptions } from './default-options'
 
 @Injectable()
-export class RateLimiterInterceptor implements NestInterceptor {
+export class RateLimiterGuard implements CanActivate {
 	private rateLimiters: Map<string, RateLimiterAbstract> = new Map()
 	private specificOptions: RateLimiterOptions
 	private queueLimiter: RateLimiterQueue
@@ -124,7 +124,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 					}
 					break
 				default:
-					throw new Error(`Invalid "type" option provided to RateLimiterInterceptor. Value was ${limiterOptions.type}`)
+					throw new Error(`Invalid "type" option provided to RateLimiterGuard. Value was ${limiterOptions.type}`)
 			}
 
 			this.rateLimiters.set(limiterOptions.keyPrefix, rateLimiter)
@@ -146,7 +146,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		return rateLimiter
 	}
 
-	async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
+	async canActivate(context: ExecutionContext): Promise<boolean> {
 		let points: number = this.specificOptions?.points || this.options.points
 		let pointsConsumed: number = this.specificOptions?.pointsConsumed || this.options.pointsConsumed
 
@@ -169,7 +169,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		const key = request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
 
 		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
-		return next.handle()
+		return true
 	}
 
 	private httpHandler(context: ExecutionContext) {
@@ -209,7 +209,7 @@ export class RateLimiterInterceptor implements NestInterceptor {
 		} catch (rateLimiterResponse) {
 			response.header('Retry-After', Math.ceil(rateLimiterResponse.msBeforeNext / 1000))
 			if (typeof this.specificOptions?.customResponseSchema === 'function' || typeof this.options.customResponseSchema === 'function') {
-				var errorBody = this.specificOptions?.customResponseSchema || this.options.customResponseSchema
+				const errorBody = this.specificOptions?.customResponseSchema || this.options.customResponseSchema
 				throw new HttpException(errorBody(rateLimiterResponse), HttpStatus.TOO_MANY_REQUESTS)
 			} else {
 				throw new HttpException(this.specificOptions?.errorMessage || this.options.errorMessage, HttpStatus.TOO_MANY_REQUESTS)

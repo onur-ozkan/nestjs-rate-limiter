@@ -5,10 +5,11 @@
 <h2 align="center">Rate Limiter Module for NestJS</h2>
 
 <p align="center">
-<a href="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter"><img src="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter/badge?style=flat-square&sanitize=true" alt="Code Quality" /></a>
-<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/v/nestjs-rate-limiter.svg?style=flat-square&sanitize=true" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/dm/nestjs-rate-limiter.svg?style=flat-square&sanitize=true" alt="NPM Downloads" /></a>
-<a href="#"><img src="https://img.shields.io/npm/l/nestjs-rate-limiter.svg?colorB=black&label=LICENSE&style=flat-square&sanitize=true" alt="License"/></a>
+<a href="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter"><img src="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter/badge?sanitize=true" alt="Code Quality" /></a>
+<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/v/nestjs-rate-limiter.svg?sanitize=true" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/dm/nestjs-rate-limiter.svg?sanitize=true" alt="NPM Downloads" /></a>
+<a href="#"><img src="https://img.shields.io/npm/l/nestjs-rate-limiter.svg?colorB=black&label=LICENSE&sanitize=true" alt="License"/></a>
+<a href="#"><img src="https://github.com/ozkanonur/nestjs-rate-limiter/actions/workflows/test.yml/badge.svg?branch=master" alt="Test"/></a>
 
 </p>
 
@@ -17,7 +18,7 @@
 - [Installation](https://github.com/ozkanonur/nestjs-rate-limiter#installation)
 - [Basic Usage](https://github.com/ozkanonur/nestjs-rate-limiter#basic-usage)
   - [Include Module](https://github.com/ozkanonur/nestjs-rate-limiter#include-module)
-  - [Using Interceptor](https://github.com/ozkanonur/nestjs-rate-limiter#using-interceptor)
+  - [Using Guard](https://github.com/ozkanonur/nestjs-rate-limiter#using-guard)
   - [With Decorator](https://github.com/ozkanonur/nestjs-rate-limiter#with-decorator)
   - [With All Options](https://github.com/ozkanonur/nestjs-rate-limiter#with-all-options)
   - [Fastify based Graphql](https://github.com/ozkanonur/nestjs-rate-limiter#fastify-based-graphql)
@@ -50,7 +51,6 @@
   - [customResponseSchema](https://github.com/ozkanonur/nestjs-rate-limiter#-customResponseSchema)
 - [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
 - [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
-- [Examples](https://github.com/ozkanonur/nestjs-rate-limiter/examples/README.md)
 
 # Description
 
@@ -83,7 +83,7 @@ First you need to import this module into your main application module:
 > app.module.ts
 
 ```ts
-import { RateLimiterModule } from 'nestjs-rate-limiter';
+import { RateLimiterModule } from 'nestjs-rate-limiter'
 
 @Module({
     imports: [RateLimiterModule],
@@ -91,36 +91,36 @@ import { RateLimiterModule } from 'nestjs-rate-limiter';
 export class ApplicationModule {}
 ```
 
-### Using Interceptor
+### Using Guard
 
-Now you need to register the interceptor. You can do this only on some routes:
+Now you need to register the guard. You can do this only on some routes:
 
 > app.controller.ts
 
 ```ts
-import { RateLimiterInterceptor } from 'nestjs-rate-limiter';
+import { RateLimiterGuard } from 'nestjs-rate-limiter'
 
-@UseInterceptors(RateLimiterInterceptor)
+@UseGuards(RateLimiterGuard)
 @Get('/login')
 public async login() {
-    console.log('hello');
+    console.log('hello')
 }
 ```
 
-Or you can choose to register the interceptor globally:
+Or you can choose to register the guard globally:
 
 > app.module.ts
 
 ```ts
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { RateLimiterModule, RateLimiterInterceptor } from 'nestjs-rate-limiter';
+import { APP_GUARD } from '@nestjs/core'
+import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter'
 
 @Module({
     imports: [RateLimiterModule],
     providers: [
         {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
+            provide: APP_GUARD,
+            useClass: RateLimiterGuard,
         },
     ],
 })
@@ -135,19 +135,19 @@ route basis:
 > app.controller.ts
 
 ```ts
-import { RateLimit } from 'nestjs-rate-limiter';
+import { RateLimit } from 'nestjs-rate-limiter'
 
 @RateLimit({ keyPrefix: 'sign-up', points: 1, duration: 60, errorMessage: 'Accounts cannot be created more than once in per minute' })
 @Get('/signup')
 public async signUp() {
-    console.log('hello');
+    console.log('hello')
 }
 ```
 
 ### Dynamic Keyprefix
 
 ```ts
-import { RateLimit } from 'nestjs-rate-limiter';
+import { RateLimit } from 'nestjs-rate-limiter'
 
 @RateLimit({
   keyPrefix: () => programmaticFuncThatReturnsValue(),
@@ -157,7 +157,7 @@ import { RateLimit } from 'nestjs-rate-limiter';
 })
 @Get('/example')
 public async example() {
-    console.log('hello');
+    console.log('hello')
 }
 ```
 
@@ -201,8 +201,8 @@ The usage of the limiter options is as in the code block below. For an explanati
     ],
     providers: [
         {
-            provide: APP_INTERCEPTOR,
-            useClass: RateLimiterInterceptor,
+            provide: APP_GUARD,
+            useClass: RateLimiterGuard,
         },
     ],
 })
@@ -486,4 +486,3 @@ GraphQLModule.forRoot({
 ## TODO
 - [ ] Support Websocket
 - [ ] Support Rpc
-- [ ] Github Actions
