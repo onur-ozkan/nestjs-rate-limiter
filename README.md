@@ -82,7 +82,7 @@ First you need to import this module into your main application module:
 > app.module.ts
 
 ```ts
-import { RateLimiterModule } from 'nestjs-rate-limiter';
+import { RateLimiterModule } from 'nestjs-rate-limiter'
 
 @Module({
     imports: [RateLimiterModule],
@@ -97,12 +97,12 @@ Now you need to register the guard. You can do this only on some routes:
 > app.controller.ts
 
 ```ts
-import { RateLimiterGuard } from 'nestjs-rate-limiter';
+import { RateLimiterGuard } from 'nestjs-rate-limiter'
 
 @UseGuards(RateLimiterGuard)
 @Get('/login')
 public async login() {
-    console.log('hello');
+    console.log('hello')
 }
 ```
 
@@ -111,8 +111,8 @@ Or you can choose to register the guard globally:
 > app.module.ts
 
 ```ts
-import { APP_GUARD } from '@nestjs/core';
-import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter';
+import { APP_GUARD } from '@nestjs/core'
+import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter'
 
 @Module({
     imports: [RateLimiterModule],
@@ -134,19 +134,19 @@ route basis:
 > app.controller.ts
 
 ```ts
-import { RateLimit } from 'nestjs-rate-limiter';
+import { RateLimit } from 'nestjs-rate-limiter'
 
 @RateLimit({ keyPrefix: 'sign-up', points: 1, duration: 60, errorMessage: 'Accounts cannot be created more than once in per minute' })
 @Get('/signup')
 public async signUp() {
-    console.log('hello');
+    console.log('hello')
 }
 ```
 
 ### Dynamic Keyprefix
 
 ```ts
-import { RateLimit } from 'nestjs-rate-limiter';
+import { RateLimit } from 'nestjs-rate-limiter'
 
 @RateLimit({
   keyPrefix: () => programmaticFuncThatReturnsValue(),
@@ -156,7 +156,7 @@ import { RateLimit } from 'nestjs-rate-limiter';
 })
 @Get('/example')
 public async example() {
-    console.log('hello');
+    console.log('hello')
 }
 ```
 
