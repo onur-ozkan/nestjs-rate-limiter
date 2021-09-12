@@ -1,7 +1,7 @@
 {
   "name": "nestjs-rate-limiter",
-  "version": "2.8.0",
-  "description": "Highly configurable rate limiter library",
+  "version": "3.0.0",
+  "description": "Highly configurable and extensible rate limiter library",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ozkanonur/nestjs-rate-limiter.git"
@@ -14,10 +14,10 @@
     "security"
   ],
   "main": "dist/index.js",
-  "author": "Ryan Dowling <ryan@ryandowling.me>",
+  "author": "Onur Ozkan <contact@onurozkan.dev>",
   "contributors": [
-    "Ryan Dowling <ryan@ryandowling.me>",
-    "Onur Ozkan <onurozkan.dev@outlook.com>"
+    "Onur Ozkan <onurozkan.dev@outlook.com>",
+    "Ryan Dowling <ryan@ryandowling.me>"
   ],
   "license": "MIT",
   "bugs": {
@@ -44,8 +44,8 @@
     "prettier": "^2.1.1",
     "reflect-metadata": "0.1.13",
     "rxjs": "^6.6.3",
-    "ts-jest": "^26.4.4",
     "ts-node": "^9.0.0",
+    "ts-jest": "^26.4.4",
     "typescript": "^4.0.2"
   }
 }
