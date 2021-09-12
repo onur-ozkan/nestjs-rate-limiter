@@ -5,10 +5,11 @@
 <h2 align="center">Rate Limiter Module for NestJS</h2>
 
 <p align="center">
-<a href="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter"><img src="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter/badge?style=flat-square&sanitize=true" alt="Code Quality" /></a>
-<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/v/nestjs-rate-limiter.svg?style=flat-square&sanitize=true" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/dm/nestjs-rate-limiter.svg?style=flat-square&sanitize=true" alt="NPM Downloads" /></a>
-<a href="#"><img src="https://img.shields.io/npm/l/nestjs-rate-limiter.svg?colorB=black&label=LICENSE&style=flat-square&sanitize=true" alt="License"/></a>
+<a href="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter"><img src="https://www.codefactor.io/repository/github/ozkanonur/nestjs-rate-limiter/badge?sanitize=true" alt="Code Quality" /></a>
+<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/v/nestjs-rate-limiter.svg?sanitize=true" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/package/nestjs-rate-limiter"><img src="https://img.shields.io/npm/dm/nestjs-rate-limiter.svg?sanitize=true" alt="NPM Downloads" /></a>
+<a href="#"><img src="https://img.shields.io/npm/l/nestjs-rate-limiter.svg?colorB=black&label=LICENSE&sanitize=true" alt="License"/></a>
+<a href="#"><img src="https://github.com/ozkanonur/nestjs-rate-limiter/actions/workflows/test.yml/badge.svg?branch=master" alt="Test"/></a>
 
 </p>
 
