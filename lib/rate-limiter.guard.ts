@@ -13,6 +13,7 @@ import {
 	RateLimiterQueue,
 	RLWrapperBlackAndWhite
 } from 'rate-limiter-flexible'
+import * as requestIp from 'request-ip'
 import { RateLimiterOptions } from './rate-limiter.interface'
 import { defaultRateLimiterOptions } from './default-options'
 
@@ -166,8 +167,8 @@ export class RateLimiterGuard implements CanActivate {
 		const response = this.httpHandler(context).res
 
 		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
-		const key = request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
-
+		const key = requestIp.getClientIp(request)
+		
 		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
 		return true
 	}
