@@ -168,7 +168,7 @@ export class RateLimiterGuard implements CanActivate {
 
 		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
 		const key = requestIp.getClientIp(request)
-		
+
 		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
 		return true
 	}
