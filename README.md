@@ -49,6 +49,7 @@
   - [omitResponseHeaders](https://github.com/ozkanonur/nestjs-rate-limiter#-omitResponseHeaders)
   - [errorMessage](https://github.com/ozkanonur/nestjs-rate-limiter#-errorMessage)
   - [customResponseSchema](https://github.com/ozkanonur/nestjs-rate-limiter#-customResponseSchema)
+- [Override Functions](https://github.com/ozkanonur/nestjs-rate-limiter#override-functions)
 - [Benchmarks](https://github.com/ozkanonur/nestjs-rate-limiter#benchmarks)
 - [TODO List](https://github.com/ozkanonur/nestjs-rate-limiter#todo)
 
@@ -465,6 +466,22 @@ GraphQLModule.forRoot({
   <br>
 
   customResponseSchema option allows to provide customizable response schemas
+
+# Override Functions
+
+#### It's possible to override <code> getIpFromRequest </code> function by extending <code> RateLimiterGuard </code> class.
+
+```ts
+import { RateLimiterGuard } from 'nestjs-rate-limiter'
+import type { Request } from 'express'
+
+class ExampleRateLimiterGuard extends RateLimiterGuard {
+  protected getIpFromRequest(request: Request): string {
+    return request.get('x-forwarded-for');
+  }
+}
+```
+
 # Benchmarks
 
 1000 concurrent clients with maximum 2000 requests per sec during 30 seconds.
