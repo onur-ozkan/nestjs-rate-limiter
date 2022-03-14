@@ -6,6 +6,7 @@ export interface RateLimiterOptions {
 	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
 	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo'
 	keyPrefix?: string
+	keyFactory?: (request: Request) => {}
 	points?: number
 	pointsConsumed?: number
 	inmemoryBlockDuration?: number

@@ -165,15 +165,22 @@ export class RateLimiterGuard implements CanActivate {
 		const request = this.httpHandler(context).req
 		const response = this.httpHandler(context).res
 
-		const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
-		const key = this.getIpFromRequest(request)
+		if (reflectedOptions.keyFactory(request)) {
+			const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
+			const key = reflectedOptions.keyFactory(request)
 
-		await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
+			await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
+		} else {
+			const rateLimiter: RateLimiterAbstract = await this.getRateLimiter(reflectedOptions)
+			const key = this.getIpFromRequest(request)
+
+			await this.responseHandler(response, key, rateLimiter, points, pointsConsumed)
+		}
 		return true
 	}
 
 	protected getIpFromRequest(request: { ip: string }): string {
-	        return request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
+		return request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
 	}
 
 	private httpHandler(context: ExecutionContext) {

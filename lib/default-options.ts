@@ -4,6 +4,7 @@ export const defaultRateLimiterOptions: RateLimiterOptions = {
 	for: 'Express',
 	type: 'Memory',
 	keyPrefix: 'global',
+	keyFactory: undefined,
 	points: 4,
 	pointsConsumed: 1,
 	inmemoryBlockOnConsumed: 0,
