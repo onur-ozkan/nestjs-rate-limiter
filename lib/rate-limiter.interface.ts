@@ -1,7 +1,7 @@
 import { Provider } from '@nestjs/common'
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces'
 import { RateLimiterRes } from 'rate-limiter-flexible'
-
+import { Request } from 'express'
 export interface RateLimiterOptions {
 	for?: 'Express' | 'Fastify' | 'Microservice' | 'ExpressGraphql' | 'FastifyGraphql'
 	type?: 'Memory' | 'Redis' | 'Memcache' | 'Postgres' | 'MySQL' | 'Mongo'
