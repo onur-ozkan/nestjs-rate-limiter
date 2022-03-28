@@ -469,7 +469,7 @@ GraphQLModule.forRoot({
 
 # Override Functions
 
-It's possible to override <code>getIpFromRequest</code> function by extending <code>RateLimiterGuard</code> class.
+#### It's possible to override <code> getIpFromRequest </code> function by extending <code> RateLimiterGuard </code> class.
 
 ```ts
 import { RateLimiterGuard } from 'nestjs-rate-limiter'

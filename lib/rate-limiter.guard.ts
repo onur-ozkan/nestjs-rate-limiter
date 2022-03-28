@@ -180,7 +180,7 @@ export class RateLimiterGuard implements CanActivate {
 	}
 
 	protected getIpFromRequest(request: { ip: string }): string {
-		return request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
+	        return request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
 	}
 
 	private httpHandler(context: ExecutionContext) {
