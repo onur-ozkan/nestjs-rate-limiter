@@ -27,9 +27,8 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "npm run build:typescript && npm run build:babel",
+		"build": "npm run build:typescript && npm run build",
 		"build:typescript": "tsc",
-		"build:babel": "babel lib --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
 		"lint": "prettier --write lib",
 		"test": "jest --config ./jest.config.js",
 		"prepublishOnly": "npm run build"
