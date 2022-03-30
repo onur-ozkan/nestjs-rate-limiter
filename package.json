@@ -1,51 +1,54 @@
 {
-  "name": "nestjs-rate-limiter",
-  "version": "3.1.0",
-  "description": "Highly configurable and extensible rate limiter library",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ozkanonur/nestjs-rate-limiter.git"
-  },
-  "keywords": [
-    "nestjs",
-    "nest",
-    "rate-limiter",
-    "request-limiter",
-    "security"
-  ],
-  "main": "dist/index.js",
-  "author": "Onur Ozkan <contact@onurozkan.dev>",
-  "contributors": [
-    "Onur Ozkan <onurozkan.dev@outlook.com>",
-    "Ryan Dowling <ryan@ryandowling.me>"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ozkanonur/nestjs-rate-limiter/issues"
-  },
-  "homepage": "https://github.com/ozkanonur/nestjs-rate-limiter#readme",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json",
-    "lint": "prettier --write lib",
-    "test": "jest --config ./jest.config.js"
-  },
-  "dependencies": {
-    "rate-limiter-flexible": "2.1.10"
-  },
-  "devDependencies": {
-    "@nestjs/common": "latest",
-    "@nestjs/core": "latest",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^14.11.1",
-    "jest": "^26.6.3",
-    "prettier": "^2.1.1",
-    "reflect-metadata": "0.1.13",
-    "rxjs": "^6.6.3",
-    "ts-node": "^9.0.0",
-    "ts-jest": "^26.4.4",
-    "typescript": "^4.0.2"
-  }
+	"name": "custom-nestjs-rate-limiter",
+	"version": "1.0.1",
+	"description": "Added functionality to nestjs-rate-limiter package",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/fj2008/nestjs-rate-limiter.git"
+	},
+	"keywords": [
+		"nestjs",
+		"nest",
+		"rate-limiter",
+		"request-limiter",
+		"security"
+	],
+	"main": "dist/index.js",
+	"author": {
+		"name": "fj2010",
+		"email": "ant1633@gmail.com"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/fj2008/nestjs-rate-limiter.git"
+	},
+	"homepage": "https://github.com/fj2008/nestjs-rate-limiter.git#readme",
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "npm run build:typescript && npm run build:babel",
+		"build:typescript": "tsc",
+		"build:babel": "babel lib --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
+		"lint": "prettier --write lib",
+		"test": "jest --config ./jest.config.js",
+		"prepublishOnly": "npm run build"
+	},
+	"dependencies": {
+		"express": "^4.17.3",
+		"rate-limiter-flexible": "2.1.10"
+	},
+	"devDependencies": {
+		"@nestjs/common": "latest",
+		"@nestjs/core": "latest",
+		"@types/jest": "^26.0.15",
+		"@types/node": "^14.11.1",
+		"jest": "^26.6.3",
+		"prettier": "^2.1.1",
+		"reflect-metadata": "0.1.13",
+		"rxjs": "^6.6.3",
+		"ts-jest": "^26.4.4",
+		"ts-node": "^9.0.0",
+		"typescript": "^4.0.2"
+	}
 }
