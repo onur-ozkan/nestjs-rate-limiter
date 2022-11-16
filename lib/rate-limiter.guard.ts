@@ -137,7 +137,7 @@ export class RateLimiterGuard implements CanActivate {
 			})
 		}
 
-		const ipBlockFilter = function (list: string[]): (key: any) => boolean {
+		const ipBlockFilter = function (list: string[]): (key: string) => boolean {
 			const blocks = list.filter((ip) => ip.includes('/')).map((ip) => new Netmask(ip))
 
 			return (key): boolean => blocks.some((block) => block.contains(key))
