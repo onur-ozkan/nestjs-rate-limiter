@@ -1,5 +1,6 @@
 import { Reflector } from '@nestjs/core'
 import { Injectable, ExecutionContext, Inject, HttpStatus, Logger, HttpException, CanActivate } from '@nestjs/common'
+import { Netmask } from 'netmask'
 import {
 	RateLimiterMemory,
 	RateLimiterRes,
@@ -136,10 +137,18 @@ export class RateLimiterGuard implements CanActivate {
 			})
 		}
 
+		const ipBlockFilter = function (list: string[]): (key: any) => boolean {
+			const blocks = list.filter((ip) => ip.includes('/')).map((ip) => new Netmask(ip))
+
+			return (key): boolean => blocks.some((block) => block.contains(key))
+		}
+
 		rateLimiter = new RLWrapperBlackAndWhite({
 			limiter: rateLimiter,
 			whiteList: this.specificOptions?.whiteList || this.options.whiteList,
 			blackList: this.specificOptions?.blackList || this.options.blackList,
+			isWhiteListed: ipBlockFilter(this.specificOptions?.whiteList || this.options.whiteList),
+			isBlackListed: ipBlockFilter(this.specificOptions?.blackList || this.options.blackList),
 			runActionAnyway: false
 		})
 
@@ -173,7 +182,7 @@ export class RateLimiterGuard implements CanActivate {
 	}
 
 	protected getIpFromRequest(request: { ip: string }): string {
-	        return request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
+		return request.ip?.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/)?.[0]
 	}
 
 	private httpHandler(context: ExecutionContext) {
