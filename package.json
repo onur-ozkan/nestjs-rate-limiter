@@ -33,19 +33,21 @@
     "test": "jest --config ./jest.config.js"
   },
   "dependencies": {
+    "netmask": "^2.0.2",
     "rate-limiter-flexible": "2.1.10"
   },
   "devDependencies": {
     "@nestjs/common": "latest",
     "@nestjs/core": "latest",
     "@types/jest": "^26.0.15",
+    "@types/netmask": "^1.0.30",
     "@types/node": "^14.11.1",
     "jest": "^26.6.3",
     "prettier": "^2.1.1",
     "reflect-metadata": "0.1.13",
     "rxjs": "^6.6.3",
-    "ts-node": "^9.0.0",
     "ts-jest": "^26.4.4",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   }
 }
